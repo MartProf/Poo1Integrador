@@ -10,7 +10,7 @@ public class Participante {
     @Id
     private int dni;
    // Persona persona;
-    Evento evento;
+    //Evento evento;
     LocalDate fechaincripción;
     
 }
