@@ -13,7 +13,7 @@ public class Concierto {
     //private List <Persona>artistas;
     private boolean entradaGratuita;
 
-    
+    private String lugar;
    
 }
     
