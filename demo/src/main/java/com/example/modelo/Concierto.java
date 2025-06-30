@@ -17,6 +17,6 @@ public class Concierto extends Evento {
     private boolean entradaGratuita;
     private String lugar;
     
-    // Getters y setters
+    
 }
     

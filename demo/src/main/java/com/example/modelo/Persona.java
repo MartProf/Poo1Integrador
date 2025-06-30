@@ -1,8 +1,6 @@
 package com.example.modelo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "personas")
@@ -10,10 +8,9 @@ public class Persona {
     @Id
     private int dni;
     
-    private String nombre;
-    private String apellido;
+    private String nombreCompleto;
     private String telefono;
-    private String email;  // Cambiar de gmail a email
+    private String email;
     
     // Getters y setters
 }

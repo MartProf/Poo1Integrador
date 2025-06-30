@@ -15,6 +15,6 @@ public abstract class Evento {
     private LocalDate fechaInicio;
     private int duracionDias;
     
-    // Getters y setters
+    
 }
     
