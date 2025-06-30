@@ -1,9 +1,6 @@
 package com.example.modelo;
 
-import java.util.List;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,14 +8,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="Concierto")
+@Table(name="Taller")
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Concierto extends Evento {
-    @Id
-    private List <Persona> artistas;
-    private boolean entradaGratuita;
+public class Taller extends Evento {
+    
+    private int cupoMaximo;
+    private Persona instructor;
+    private Modalidad modalidad;
+
 
 }
-    
