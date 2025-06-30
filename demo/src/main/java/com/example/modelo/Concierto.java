@@ -16,7 +16,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Concierto extends Evento {
-    @Id
+
+    
     private List <Persona> artistas;
     private boolean entradaGratuita;
 

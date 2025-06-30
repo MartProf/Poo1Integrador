@@ -4,11 +4,17 @@
              version="3.0">
     <persistence-unit name="Municipalidad" transaction-type="RESOURCE_LOCAL">     
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>com.example.modelo.Persona</class> 
+        <class>com.example.modelo.CicloDeCine</class>
+        <class>com.example.modelo.Concierto</class>
         <class>com.example.modelo.Evento</class> 
-        <class>com.example.modelo.Participante</class> 
+        <class>com.example.modelo.Exposicion</class>
         <class>com.example.modelo.Feria</class> 
-        <class>com.example.modelo.Concierto</class> 
+        <class>com.example.modelo.Participante</class> 
+        <class>com.example.modelo.Pelicula</class>
+        <class>com.example.modelo.Persona</class>
+        <class>com.example.modelo.Taller</class>
+
+
         <!-- ACA SEGUI DEFINIENDO TUS CLASES A PERSISTIR-->
                  
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
