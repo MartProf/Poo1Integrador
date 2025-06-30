@@ -1,14 +1,11 @@
 package com.example.modelo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name="Feria")
-public class Feria {
-    @Id
-    private int cantidaddeStand;
-    private boolean alAirelibre;
+@Table(name = "feria")
+public class Feria extends Evento {
+    private int cantidadStands;  // Corregir nombre (de cantidaddeStand)
+    private boolean alAireLibre; // Corregir nombre (de alAirelibre)
     
-}
+} 

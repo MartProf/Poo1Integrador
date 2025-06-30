@@ -1,19 +1,22 @@
 package com.example.modelo;
 
+import jakarta.persistence.*;
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
 @Entity
-@Table(name="Concierto")
-public class Concierto {
-    @Id
-    //private List <Persona>artistas;
+@Table(name = "concierto")
+public class Concierto extends Evento {
+    @ManyToMany
+    @JoinTable(
+        name = "concierto_artistas",
+        joinColumns = @JoinColumn(name = "concierto_id"),
+        inverseJoinColumns = @JoinColumn(name = "persona_id")
+    )
+    private List<Persona> artistas;
+    
     private boolean entradaGratuita;
-
     private String lugar;
-   
+    
+    // Getters y setters
 }
     

@@ -1,19 +1,20 @@
 package com.example.modelo;
-
 import java.time.LocalDate;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name="evento")
-public class Evento {
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "evento")
+public abstract class Evento {
     @Id
-    private int id;
-    private String nombre;
-    private LocalDate fechainicio;
-    private int duración;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
-   
+    private String nombre;
+    private LocalDate fechaInicio;
+    private int duracionDias;
+    
+    // Getters y setters
 }
     

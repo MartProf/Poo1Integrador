@@ -1,17 +1,25 @@
 package com.example.modelo;
+
+import jakarta.persistence.*;
 import java.time.LocalDate;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(name="participante")
+@Table(name = "participante")
 public class Participante {
     @Id
-    private int dni;
-   // Persona persona;
-    Evento evento;
-    LocalDate fechaincripción;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
+    @ManyToOne
+    @JoinColumn(name = "persona_id")
+    private Persona persona;
+    
+    @ManyToOne
+    @JoinColumn(name = "evento_id")
+    private Evento evento;
+    
+    private LocalDate fechaInscripcion; // Corregir nombre
+    
+    // Getters y setters
 }
     

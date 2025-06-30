@@ -5,14 +5,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="personas")
+@Table(name = "personas")
 public class Persona {
     @Id
     private int dni;
+    
     private String nombre;
     private String apellido;
     private String telefono;
-    private String gmail;
+    private String email;  // Cambiar de gmail a email
     
+    // Getters y setters
 }
-    
