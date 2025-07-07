@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "exposicion")
-public class Exposicion extends Evento {
+public class Exposición extends Evento {
     private String tipoArte;
     
     @ManyToOne

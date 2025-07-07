@@ -75,3 +75,4 @@
       </ImageView>
    </children>
 </AnchorPane>
+<AnchorPane ... fx:controller="com.example.controlador.SesionController">

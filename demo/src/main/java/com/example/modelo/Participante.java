@@ -18,8 +18,12 @@ public class Participante {
     @JoinColumn(name = "evento_id")
     private Evento evento;
     
-    private LocalDate fechaInscripcion; // Corregir nombre
+    private LocalDate fechaInscripcion;
     
     // Getters y setters
+    public Long getId() { return id; }
+    public Persona getPersona() { return persona; }
+    public Evento getEvento() { return evento; }
+    public LocalDate getFechaInscripcion() { return fechaInscripcion; }
+    // Setters correspondientes
 }
-    

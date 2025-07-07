@@ -1,57 +1,26 @@
 package com.example;
 
-import java.io.IOException;
-
-import com.example.repositorio.Repositorio;
-import com.example.servicio.Servicio;
-
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
- * JavaFX App
- */
 public class App extends Application {
-    private static Scene scene;
-    private static Servicio servicio;
-    private static EntityManagerFactory emf;
 
     @Override
-    public void start(Stage stage) {
-        try{
-            emf = Persistence.createEntityManagerFactory("Municipalidad");
-            servicio = new Servicio(new Repositorio(emf));
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("sesion.fxml"));
-            scene = new Scene(fxmlLoader.load(),900,600);
-            stage.setScene(scene);
-            stage.show();
+    public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/sesion.fxml"));
+        Parent root = loader.load();
 
-        }
-        catch(IOException e){
-            System.err.println("Fallo al cargar archivo fxml: " + e.getMessage());
-            e.printStackTrace();
-        }    
-
-
+        Scene scene = new Scene(root);
+        primaryStage.setTitle("Sistema de Gestión de Eventos - Login");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
     }
 
-    public static Servicio getServicio(){
-        return servicio;
+    public static void main(String[] args) {
+        launch(args);
     }
-
-    
-    public static FXMLLoader setRoot(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        scene.setRoot(fxmlLoader.load());
-        return fxmlLoader;
-    }
-
-    public static void main (String[] args){
-            launch();
-        }
-    }
-    
+}

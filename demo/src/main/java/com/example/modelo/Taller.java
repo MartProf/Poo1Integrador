@@ -21,8 +21,27 @@ public class Taller extends Evento implements TieneCupo {
     
     @Override
     public int getCupoDisponible() {
-        return cupoMaximo - getParticipantes().size();
+        return cupoMaximo - (getParticipantes() != null ? getParticipantes().size() : 0);
     }
     
     // Getters y setters
+    public Persona getInstructor() {
+        return instructor;
+    }
+
+    public void setInstructor(Persona instructor) {
+        this.instructor = instructor;
+    }
+
+    public Modalidad getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(Modalidad modalidad) {
+        this.modalidad = modalidad;
+    }
+
+    public void setCupoMaximo(int cupoMaximo) {
+        this.cupoMaximo = cupoMaximo;
+    }
 }

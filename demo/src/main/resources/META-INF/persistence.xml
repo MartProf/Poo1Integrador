@@ -13,6 +13,8 @@
     <class>com.example.modelo.CicloDeCine</class>
     <class>com.example.modelo.Exposición</class>
     <class>com.example.modelo.Pelicula</class>
+    <class>com.example.modelo.Modalidad</class>
+    
         <!-- ACA SEGUI DEFINIENDO TUS CLASES A PERSISTIR-->
                  
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
