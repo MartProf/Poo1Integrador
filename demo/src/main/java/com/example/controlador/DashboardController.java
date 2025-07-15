@@ -4,52 +4,81 @@ import com.example.App;
 import com.example.modelo.Persona;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+
+import java.io.IOException;
 
 public class DashboardController {
 
     @FXML
-    private Label lblUsuario;
+    private StackPane contentPane;
 
     @FXML
-    private StackPane contentPane;
+    private Label lblUsuario;
 
     private Persona personaLogueada;
 
+
+
+    // Este método usamos desde SesionController
     public void setPersonaLogueada(Persona persona) {
         this.personaLogueada = persona;
-        lblUsuario.setText(persona.getNombre());
-        cargarVista("eventos"); // Vista por defecto
+        if (lblUsuario != null && persona != null) {
+            lblUsuario.setText(persona.getNombre() + " " + persona.getApellido());
+        }
     }
 
     @FXML
-    private void handleEventos() {
-        cargarVista("eventos");
+    public void handleMisEventos() {
+        setContent("misEventos.fxml");
     }
 
     @FXML
-    private void handlePerfil() {
-        cargarVista("perfil");
+    public void handleNuevoEvento() {
+        setContent("nuevoEvento.fxml");
     }
 
-    private void cargarVista(String nombreVista) {
+    @FXML
+    public void handlePerfil() {
+        setContent("perfil.fxml");
+    }
+
+    @FXML
+    private void handleCerrarSesion() {
         try {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource(nombreVista + ".fxml"));
-            Node vista = loader.load();
+            App.setRoot("sesion"); 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-            if (nombreVista.equals("perfil")) {
-                PerfilController controller = loader.getController();
-                controller.setPersona(personaLogueada);
-            } else if (nombreVista.equals("eventos")) {
-                EventosController controller = loader.getController();
-                controller.setPersona(personaLogueada);
-            }
+    @FXML
+    private void handleEventosDisponibles() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/eventos_disponibles.fxml"));
+            Parent root = loader.load();
 
-            contentPane.getChildren().setAll(vista);
+            EventosDisponiblesController controller = loader.getController();
+            controller.setPersonaLogueada(personaLogueada);
 
-        } catch (Exception e) {
+            contentPane.getChildren().setAll(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setContent(String fxml) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/" + fxml));
+            StackPane pane = loader.load();
+
+            // Opcional: pasar personaLogueada a la vista cargada
+            // Dashboard siempre mantiene el usuario
+            contentPane.getChildren().clear();
+            contentPane.getChildren().add(pane);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
