@@ -1,0 +1,7 @@
+<!-- eventos.fxml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
+<StackPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <Label text="Gestión de Eventos" style="-fx-font-size: 36px;"/>
+</StackPane>

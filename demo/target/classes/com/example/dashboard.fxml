@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.controlador.DashboardController"
+            prefWidth="1200" prefHeight="800">
+
+    <!-- HEADER -->
+    <top>
+        <HBox style="-fx-background-color: #478978; -fx-padding: 10;" spacing="30" alignment="CENTER_LEFT" prefHeight="60.0">
+            <Label text="Municipalidad" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Button text="Eventos" fx:id="btnEventos" onAction="#handleEventos"
+                    style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 16px;"/>
+
+            <Pane HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="lblUsuario" text="Usuario" style="-fx-text-fill: white; -fx-font-size: 16px;"/>
+            <Button text="Perfil" onAction="#handlePerfil"
+                    style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 16px;"/>
+        </HBox>
+    </top>
+
+    <!-- CONTENIDO CAMBIANTE -->
+    <center>
+        <StackPane fx:id="contentPane" style="-fx-background-color: #ffffff;"/>
+    </center>
+
+</BorderPane>

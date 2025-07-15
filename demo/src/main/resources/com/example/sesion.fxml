@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #478978;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #478978;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controlador.SesionController">
    <children>
       <AnchorPane layoutX="460.0" layoutY="91.0" prefHeight="400.0" prefWidth="370.0" style="-fx-background-color: #84DCC6;">
          <children>
@@ -36,7 +36,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <Button fx:id="BtnIniciarSesion" layoutX="31.0" layoutY="247.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="300.0" style="-fx-border-color: #ffffff; -fx-background-color: #242424;" stylesheets="@style.css" text="INICIAR SESIÓN" textFill="WHITE">
+            <Button fx:id="BtnIniciarSesion" layoutX="31.0" layoutY="247.0" mnemonicParsing="false" onAction="#handleIniciarSesion" prefHeight="25.0" prefWidth="300.0" style="-fx-border-color: #ffffff; -fx-background-color: #242424;" stylesheets="@style.css" text="INICIAR SESIÓN" textFill="WHITE">
                <font>
                   <Font name="Arial" size="20.0" />
                </font>
@@ -53,9 +53,9 @@
                   <Cursor fx:constant="DEFAULT" />
                </cursor>
             </Label>
-            <Button fx:id="BtnRegistrarse" layoutX="197.0" layoutY="333.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Registrarse." textFill="#2d00e1" underline="true">
+            <Button fx:id="BtnRegistrarse" layoutX="197.0" layoutY="329.0" mnemonicParsing="false" onAction="#handleRegistrarse" style="-fx-background-color: transparent;" text="Registrarse" textFill="#2d00e1" underline="true">
                <font>
-                  <Font size="14.0" />
+                  <Font size="17.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -63,12 +63,12 @@
             </Button>
          </children>
       </AnchorPane>
-      <Label layoutX="35.0" layoutY="374.0" text="Municipalidad" textFill="WHITE">
+      <Label layoutX="40.0" layoutY="260.0" text="Municipalidad" textFill="WHITE">
          <font>
             <Font name="Verdana Bold" size="48.0" />
          </font>
       </Label>
-      <ImageView fitHeight="234.0" fitWidth="349.0" layoutX="52.0" layoutY="124.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="114.0" fitWidth="349.0" layoutX="52.0" layoutY="244.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@Imagenes/Registro.png" />
          </image>

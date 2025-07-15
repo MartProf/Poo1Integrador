@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #478978;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controlador.RegistroController">
+
+  <children>
+
+    <AnchorPane layoutX="200.0" layoutY="50.0" prefHeight="500.0" prefWidth="500.0" style="-fx-background-color: #84DCC6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
+      <children>
+
+        <Label layoutX="180.0" layoutY="20.0" text="Registro">
+          <font>
+            <Font name="Verdana Bold" size="36.0" />
+          </font>
+        </Label>
+
+        <!-- Campos de texto -->
+        <Label layoutX="76.0" layoutY="83.0" text="Nombre:" />
+        <TextField fx:id="txtNombre" layoutX="150.0" layoutY="80.0" prefHeight="25.0" prefWidth="246.0" />
+
+        <Label layoutX="76.0" layoutY="123.0" text="Apellido:" />
+        <TextField fx:id="txtApellido" layoutX="150.0" layoutY="120.0" prefHeight="25.0" prefWidth="246.0" />
+
+        <Label layoutX="76.0" layoutY="163.0" text="DNI:" />
+        <TextField fx:id="txtDni" layoutX="150.0" layoutY="160.0" prefHeight="25.0" prefWidth="246.0" />
+
+        <Label layoutX="76.0" layoutY="203.0" text="Teléfono:" />
+        <TextField fx:id="txtTelefono" layoutX="150.0" layoutY="200.0" prefHeight="25.0" prefWidth="246.0" />
+
+        <Label layoutX="76.0" layoutY="243.0" text="Email:" />
+        <TextField fx:id="txtEmail" layoutX="150.0" layoutY="240.0" prefHeight="25.0" prefWidth="246.0" />
+
+        <Label layoutX="76.0" layoutY="283.0" text="Usuario:" />
+        <TextField fx:id="txtUsuario" layoutX="150.0" layoutY="280.0" prefHeight="25.0" prefWidth="246.0" />
+
+        <Label layoutX="76.0" layoutY="323.0" text="Contraseña:" />
+        <PasswordField fx:id="txtContrasena" layoutX="150.0" layoutY="320.0" prefHeight="25.0" prefWidth="246.0" />
+
+        <!-- Botones -->
+        <Button layoutX="150.0" layoutY="380.0" onAction="#handleRegistrar" prefWidth="200.0" text="Registrar" />
+
+        <Button layoutX="150.0" layoutY="420.0" onAction="#handleVolver" prefWidth="200.0" style="-fx-background-color: transparent; -fx-text-fill: blue; -fx-underline: true;" text="Volver">
+          <cursor>
+            <Cursor fx:constant="HAND" />
+          </cursor>
+        </Button>
+
+      </children>
+    </AnchorPane>
+  </children>
+</AnchorPane>

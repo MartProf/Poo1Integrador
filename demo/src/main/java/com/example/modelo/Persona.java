@@ -26,6 +26,8 @@ public class Persona {
     private String apellido;
     private String telefono;
     private String email;
+    private String usuario;      
+    private String contrasena;   
 
     // Eventos donde actúa como responsable
     @ManyToMany(mappedBy = "responsables")

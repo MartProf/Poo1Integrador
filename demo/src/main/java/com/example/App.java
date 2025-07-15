@@ -26,7 +26,8 @@ public class App extends Application {
             emf = Persistence.createEntityManagerFactory("Municipalidad");
             servicio = new Servicio(new Repositorio(emf));
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("sesion.fxml"));
-            scene = new Scene(fxmlLoader.load(),900,600);
+            scene = new Scene(fxmlLoader.load());
+            stage.setMaximized(true); // Hacer que siempre se abra maximizada
             stage.setScene(scene);
             stage.show();
 
