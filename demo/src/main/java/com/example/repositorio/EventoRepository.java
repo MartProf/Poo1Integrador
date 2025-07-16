@@ -3,7 +3,6 @@ package com.example.repositorio;
 import com.example.modelo.Evento;
 import com.example.modelo.EstadoEvento;
 import com.example.modelo.Persona;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
@@ -46,7 +45,9 @@ public class EventoRepository {
 
     public void save(Evento evento) {
         if (evento.getId() == 0) {
+            em.getTransaction().begin();
             em.persist(evento);
+            em.getTransaction().commit();
         } else {
             em.merge(evento);
         }

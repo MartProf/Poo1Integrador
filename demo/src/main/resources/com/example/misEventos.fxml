@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.controlador.MisEventosController">
+
+    <VBox spacing="10" alignment="TOP_CENTER" style="-fx-padding: 20;">
+        
+        <Label text="Mis Eventos" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+        <TableView fx:id="tablaMisEventos" prefWidth="800">
+            <columns>
+                <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
+                <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
+                <TableColumn fx:id="colEstado" text="Estado" prefWidth="150"/>
+                <TableColumn fx:id="colAcciones" text="Acciones" prefWidth="200"/>
+            </columns>
+        </TableView>
+
+    </VBox>
+</StackPane>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.controlador.NuevoEventoController">
+
+    <ScrollPane fitToWidth="true">
+        <VBox spacing="10" alignment="TOP_LEFT" style="-fx-padding: 20;">
+
+            <Label text="Crear Nuevo Evento" style="-fx-font-size: 20px;"/>
+
+            <!-- Campos comunes -->
+            <Label text="Nombre:"/>
+            <TextField fx:id="txtNombre"/>
+
+            <Label text="Fecha de inicio:"/>
+            <DatePicker fx:id="dateFechaInicio"/>
+
+            <Label text="Duración (días):"/>
+            <TextField fx:id="txtDuracion"/>
+
+            <Label text="Estado:"/>
+            <ComboBox fx:id="cmbEstado"/>
+
+            <Label text="Tipo de evento:"/>
+            <ComboBox fx:id="cmbTipoEvento" onAction="#handleTipoEventoChanged"/>
+
+            <!-- Contenedor dinámico -->
+            <VBox fx:id="panelCamposEspecificos" spacing="10" style="-fx-border-color: lightgray; -fx-padding: 10;"/>
+
+            <!-- Botón fijo -->
+            <Button text="Guardar Evento" onAction="#handleGuardarEvento"/>
+
+        </VBox>
+    </ScrollPane>
+
+</StackPane>

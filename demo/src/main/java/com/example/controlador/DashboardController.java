@@ -32,12 +32,32 @@ public class DashboardController {
 
     @FXML
     public void handleMisEventos() {
-        setContent("misEventos.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/misEventos.fxml"));
+            Parent root = loader.load();
+
+            MisEventosController controller = loader.getController();
+            controller.setPersonaLogueada(personaLogueada);
+
+            contentPane.getChildren().setAll(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void handleNuevoEvento() {
-        setContent("nuevoEvento.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/nuevoEvento.fxml"));
+            Parent root = loader.load();
+
+            NuevoEventoController controller = loader.getController();
+            controller.setPersonaLogueada(personaLogueada);
+
+            contentPane.getChildren().setAll(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

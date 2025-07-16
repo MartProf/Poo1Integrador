@@ -49,6 +49,11 @@ public class Persona {
     @OneToMany(mappedBy = "persona")
     private List<Participante> participaciones;
 
+    @Override
+    public String toString() {
+        return nombre + " " + apellido;
+    }
+
     
 }
     

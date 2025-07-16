@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.controlador.BuscarPersonaController"
+            prefWidth="400" prefHeight="400">
+
+    <center>
+        <VBox style="-fx-padding: 10;" spacing="10.0">
+            <Label text="Buscar Persona por DNI o Nombre:" />
+            <TextField fx:id="txtFiltro" promptText="Ingrese DNI o Nombre"/>
+
+            <Button fx:id="btnBuscar" text="Buscar" maxWidth="Infinity"/>
+
+            <Label text="Resultados:" />
+            <ListView fx:id="listResultados" prefHeight="200"/>
+
+            <HBox spacing="10">
+                <Button fx:id="btnSeleccionar" text="Seleccionar" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnCancelar" text="Cancelar" HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>
