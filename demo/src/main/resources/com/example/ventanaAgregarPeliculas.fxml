@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.controlador.AgregarPeliculasModalController">
+    
+    <center>
+        <VBox style="-fx-padding: 10;" spacing="10">
+            
+            <HBox spacing="10">
+                <VBox spacing="5">
+                    <Label text="Título de la Película:"/>
+                    <TextField fx:id="tituloField"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="Orden en el ciclo:"/>
+                    <TextField fx:id="ordenField"/>
+                </VBox>
+                <VBox alignment="BOTTOM_CENTER">
+                    <Button text="Agregar" onAction="#handleAgregarPelicula"/>
+                </VBox>
+            </HBox>
+
+            <TableView fx:id="tablaPeliculas" prefHeight="200">
+                <columns>
+                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="200"/>
+                    <TableColumn fx:id="colOrden" text="Orden" prefWidth="100"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Eliminar seleccionada" onAction="#handleEliminarSeleccionada"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox style="-fx-padding: 10;" spacing="10" alignment="CENTER_RIGHT">
+            <Button text="Cancelar" onAction="#handleCancelar"/>
+            <Button text="Aceptar" onAction="#handleAceptar"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

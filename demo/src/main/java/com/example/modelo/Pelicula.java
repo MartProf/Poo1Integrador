@@ -25,7 +25,7 @@ public class Pelicula {
 
 
     private String titulo;
-    private int orden;;
+    private int orden;
 
     @ManyToOne
     @JoinColumn(name = "cicloDeCine_id")

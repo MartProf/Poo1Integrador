@@ -2,7 +2,7 @@ package com.example.modelo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,8 +18,8 @@ public class Exposicion extends Evento {
     
     private String tipoArte;
 
-    @OneToOne
-    @JoinColumn(name = "curador_id")
+    @ManyToOne
+    @JoinColumn(name = "curador_id", unique = false)
     private Persona curador;
 
     

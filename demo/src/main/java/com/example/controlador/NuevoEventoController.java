@@ -6,8 +6,15 @@ import com.example.util.BuscarPersonaModalHelper;
 import jakarta.persistence.EntityManager;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +65,9 @@ public class NuevoEventoController {
 
     private EventoService eventoService;
     private Persona personaLogueada;
+
+    private List<Pelicula> peliculasAgregadas = new ArrayList<>();
+    private Label lblPeliculasSeleccionadas;
 
     public NuevoEventoController() {
         EntityManager em = com.example.util.JpaUtil.getEntityManager();
@@ -171,7 +181,22 @@ public class NuevoEventoController {
 
     private void mostrarCamposCicloDeCine() {
         chkHayCharlas = new CheckBox("¿Incluye charlas posteriores?");
-        panelCamposEspecificos.getChildren().add(chkHayCharlas);
+        Button btnAgregarPeliculas = new Button("Agregar Películas");
+        lblPeliculasSeleccionadas = new Label("0 películas seleccionadas");
+
+        btnAgregarPeliculas.setOnAction(e -> {
+            try {
+                handleAgregarPeliculas();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        panelCamposEspecificos.getChildren().addAll(
+            chkHayCharlas,
+            btnAgregarPeliculas,
+            lblPeliculasSeleccionadas
+        );
     }
 
     @FXML
@@ -214,6 +239,15 @@ public class NuevoEventoController {
                 case "CicloDeCine" -> {
                     CicloDeCine ciclo = new CicloDeCine();
                     ciclo.setHayCharlas(chkHayCharlas.isSelected());
+                    if (!peliculasAgregadas.isEmpty()) {
+                        ciclo.setPeliculas(peliculasAgregadas);
+                        // Sincronizar la relación bidireccional
+                        for (Pelicula pelicula : peliculasAgregadas) {
+                            pelicula.setCicloDeCine(ciclo);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Debe agregar al menos una película al ciclo de cine.");
+                    }
                     evento = ciclo;
                 }
                 default -> throw new IllegalStateException("Tipo de evento no soportado");
@@ -234,6 +268,23 @@ public class NuevoEventoController {
         }
     }
 
+
+    @FXML
+    private void handleAgregarPeliculas() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/ventanaAgregarPeliculas.fxml"));
+        Parent root = loader.load();
+
+        AgregarPeliculasModalController controller = loader.getController();
+        controller.setControladorPadre(this);
+
+        Stage stage = new Stage();
+        stage.setTitle("Agregar Películas");
+        stage.setScene(new Scene(root));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+    }
+
+    
     private void limpiarCampos() {
         txtNombre.clear();
         dateFechaInicio.setValue(null);
@@ -246,4 +297,14 @@ public class NuevoEventoController {
     public void setPersonaLogueada(Persona persona) {
         this.personaLogueada = persona;
     }
+
+    public void setPeliculasAgregadas(List<Pelicula> peliculas) {
+        if (peliculas != null) {
+            this.peliculasAgregadas = peliculas;
+            if (lblPeliculasSeleccionadas != null) {
+                lblPeliculasSeleccionadas.setText(peliculas.size() + " película(s) seleccionada(s)");
+            }
+        }
+    }
+    
 }
