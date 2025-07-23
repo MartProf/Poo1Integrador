@@ -65,7 +65,19 @@ public class DashboardController {
 
     @FXML
     public void handlePerfil() {
-        setContent("perfil.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/perfil.fxml"));
+            Parent root = loader.load();
+
+            PerfilController controller = loader.getController();
+            controller.setPersonaLogueada(personaLogueada); // la persona logueada
+            // Refrescar las inscripciones cada vez que se accede al perfil
+            controller.refrescarInscripciones();
+
+            contentPane.getChildren().setAll(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -82,6 +94,7 @@ public class DashboardController {
         mostrarVistaEventosDisponibles();
     }
 
+
     public void mostrarVistaEventosDisponibles() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/eventos_disponibles.fxml"));
@@ -91,20 +104,6 @@ public class DashboardController {
             controller.setPersonaLogueada(personaLogueada);
 
             contentPane.getChildren().setAll(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setContent(String fxml) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/" + fxml));
-            StackPane pane = loader.load();
-
-            // Opcional: pasar personaLogueada a la vista cargada
-            // Dashboard siempre mantiene el usuario
-            contentPane.getChildren().clear();
-            contentPane.getChildren().add(pane);
         } catch (IOException e) {
             e.printStackTrace();
         }

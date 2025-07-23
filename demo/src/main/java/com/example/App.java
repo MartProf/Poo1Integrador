@@ -2,11 +2,8 @@ package com.example;
 
 import java.io.IOException;
 
-import com.example.repositorio.Repositorio;
-import com.example.servicio.Servicio;
+import com.example.servicio.PersonaService;
 
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,14 +14,12 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
     private static Scene scene;
-    private static Servicio servicio;
-    private static EntityManagerFactory emf;
+    private static PersonaService personaService;
 
     @Override
     public void start(Stage stage) {
         try{
-            emf = Persistence.createEntityManagerFactory("Municipalidad");
-            servicio = new Servicio(new Repositorio(emf));
+            personaService = new PersonaService();
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("sesion.fxml"));
             scene = new Scene(fxmlLoader.load());
             stage.setMaximized(true); // Hacer que siempre se abra maximizada
@@ -40,8 +35,8 @@ public class App extends Application {
 
     }
 
-    public static Servicio getServicio(){
-        return servicio;
+    public static PersonaService getPersonaService(){
+        return personaService;
     }
 
     

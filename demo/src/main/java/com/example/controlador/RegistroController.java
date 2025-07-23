@@ -33,23 +33,67 @@ public class RegistroController {
     @FXML
     private void handleRegistrar() {
         try {
-            Persona persona = new Persona();
-            persona.setNombre(txtNombre.getText());
-            persona.setApellido(txtApellido.getText());
-            persona.setDni(Integer.parseInt(txtDni.getText()));
-            persona.setTelefono(txtTelefono.getText());
-            persona.setEmail(txtEmail.getText());
-            persona.setUsuario(txtUsuario.getText());
-            persona.setContrasena(txtContrasena.getText());
+            // Validaciones básicas de UI (campos vacíos)
+            if (txtNombre.getText() == null || txtNombre.getText().trim().isEmpty()) {
+                mostrarAlerta("Campo requerido", "El nombre es obligatorio.");
+                return;
+            }
+            if (txtApellido.getText() == null || txtApellido.getText().trim().isEmpty()) {
+                mostrarAlerta("Campo requerido", "El apellido es obligatorio.");
+                return;
+            }
+            if (txtDni.getText() == null || txtDni.getText().trim().isEmpty()) {
+                mostrarAlerta("Campo requerido", "El DNI es obligatorio.");
+                return;
+            }
+            if (txtTelefono.getText() == null || txtTelefono.getText().trim().isEmpty()) {
+                mostrarAlerta("Campo requerido", "El teléfono es obligatorio.");
+                return;
+            }
+            if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
+                mostrarAlerta("Campo requerido", "El email es obligatorio.");
+                return;
+            }
+            if (txtUsuario.getText() == null || txtUsuario.getText().trim().isEmpty()) {
+                mostrarAlerta("Campo requerido", "El usuario es obligatorio.");
+                return;
+            }
+            if (txtContrasena.getText() == null || txtContrasena.getText().trim().isEmpty()) {
+                mostrarAlerta("Campo requerido", "La contraseña es obligatoria.");
+                return;
+            }
 
-            App.getServicio().registrarPersona(persona);
+            // Validación de formato de DNI
+            int dni;
+            try {
+                dni = Integer.parseInt(txtDni.getText().trim());
+            } catch (NumberFormatException e) {
+                mostrarAlerta("DNI inválido", "El DNI debe ser un número válido.");
+                return;
+            }
+
+            // Crear la persona y delegar las validaciones de negocio al servicio
+            Persona persona = new Persona();
+            persona.setNombre(txtNombre.getText().trim());
+            persona.setApellido(txtApellido.getText().trim());
+            persona.setDni(dni);
+            persona.setTelefono(txtTelefono.getText().trim());
+            persona.setEmail(txtEmail.getText().trim());
+            persona.setUsuario(txtUsuario.getText().trim());
+            persona.setContrasena(txtContrasena.getText().trim());
+
+            // El servicio se encarga de todas las validaciones de negocio
+            App.getPersonaService().registrarPersona(persona);
 
             mostrarAlerta("Registro exitoso", "Usuario registrado correctamente");
-
             App.setRoot("sesion"); // Vuelve a la ventana de login
 
+        } catch (IllegalArgumentException e) {
+            // Mostrar el mensaje específico del servicio
+            mostrarAlerta("Error de validación", e.getMessage());
         } catch (Exception e) {
-            mostrarAlerta("Error", "Verifica los datos ingresados");
+            mostrarAlerta("Error", "Ocurrió un error inesperado al registrar el usuario.");
+            e.printStackTrace();
         }
     }
 

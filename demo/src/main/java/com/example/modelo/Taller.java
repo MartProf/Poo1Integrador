@@ -34,8 +34,9 @@ public class Taller extends Evento implements TieneCupo{
 
     @Override
     public int getCupoDisponible() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCupoDisponible'");
+        // Retorna cupo máximo menos participantes inscritos
+        int inscritos = (getParticipantes() != null) ? getParticipantes().size() : 0;
+        return cupoMaximo - inscritos;  
     }
 
     

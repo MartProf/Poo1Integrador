@@ -2,7 +2,6 @@ package com.example.controlador;
 
 import com.example.App;
 import com.example.modelo.Persona;
-import com.example.servicio.Servicio;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,8 +27,7 @@ public class SesionController {
         String usuario = txtUsu.getText();
         String contrasena = TxtCon.getText();
 
-        Servicio servicio = App.getServicio();
-        Persona persona = servicio.login(usuario, contrasena);
+        Persona persona = App.getPersonaService().login(usuario, contrasena);
 
         if (persona != null) {
             try {

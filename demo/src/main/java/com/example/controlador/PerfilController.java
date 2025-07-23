@@ -1,12 +1,157 @@
 package com.example.controlador;
 
+import com.example.modelo.Evento;
+import com.example.modelo.Participante;
 import com.example.modelo.Persona;
+import com.example.servicio.PersonaService;
 
-public class PerfilController {
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 
-    public void setPersona(Persona personaLogueada) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setPersona'");
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class PerfilController implements Initializable {
+
+    private Persona personaLogueada;
+    private PersonaService personaService = new PersonaService();
+
+    @FXML private TextField nombreField;
+    @FXML private TextField apellidoField;
+    @FXML private TextField emailField;
+    @FXML private TextField dniField;
+    @FXML private TextField telefonoField;
+    @FXML private Button guardarButton;
+    @FXML private TableView<Evento> tablaInscripciones;
+    @FXML private TableColumn<Evento, String> colNombreEvento;
+    @FXML private TableColumn<Evento, String> colFechaInicio;
+    @FXML private TableColumn<Evento, String> colTipo;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Configuraciones iniciales si es necesario
     }
 
+    public void setPersonaLogueada(Persona persona) {
+        this.personaLogueada = persona;
+        cargarDatosPersona();
+        cargarInscripciones();
+    }
+
+    private void cargarDatosPersona() {
+        if (personaLogueada != null) {
+            nombreField.setText(personaLogueada.getNombre());
+            apellidoField.setText(personaLogueada.getApellido());
+            emailField.setText(personaLogueada.getEmail());
+            dniField.setText(String.valueOf(personaLogueada.getDni()));
+            telefonoField.setText(personaLogueada.getTelefono());
+        }
+    }
+
+    @FXML
+    private void guardarDatos() {
+        if (personaLogueada != null) {
+            try {
+                // Validar que los campos no estén vacíos
+                if (nombreField.getText() == null || nombreField.getText().trim().isEmpty()) {
+                    mostrarAlertaInfo("Campo requerido", "El nombre es obligatorio.");
+                    return;
+                }
+                
+                if (apellidoField.getText() == null || apellidoField.getText().trim().isEmpty()) {
+                    mostrarAlertaInfo("Campo requerido", "El apellido es obligatorio.");
+                    return;
+                }
+                
+                if (emailField.getText() == null || emailField.getText().trim().isEmpty()) {
+                    mostrarAlertaInfo("Campo requerido", "El email es obligatorio.");
+                    return;
+                }
+                
+                if (dniField.getText() == null || dniField.getText().trim().isEmpty()) {
+                    mostrarAlertaInfo("Campo requerido", "El DNI es obligatorio.");
+                    return;
+                }
+                
+                if (telefonoField.getText() == null || telefonoField.getText().trim().isEmpty()) {
+                    mostrarAlertaInfo("Campo requerido", "El teléfono es obligatorio.");
+                    return;
+                }
+
+                // Validar formato del email
+                String email = emailField.getText().trim();
+                if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                    mostrarAlertaInfo("Email inválido", "Por favor ingrese un email válido.");
+                    return;
+                }
+
+                // Validar que el DNI sea un número válido
+                int dni;
+                try {
+                    dni = Integer.parseInt(dniField.getText().trim());
+                    if (dni <= 0) {
+                        mostrarAlertaInfo("DNI inválido", "El DNI debe ser un número positivo.");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    mostrarAlertaInfo("DNI inválido", "El DNI debe ser un número válido.");
+                    return;
+                }
+
+                // Si todas las validaciones pasan, actualizar los datos
+                personaLogueada.setNombre(nombreField.getText().trim());
+                personaLogueada.setApellido(apellidoField.getText().trim());
+                personaLogueada.setEmail(email);
+                personaLogueada.setDni(dni);
+                personaLogueada.setTelefono(telefonoField.getText().trim());
+
+                personaService.actualizarPersona(personaLogueada);
+
+                mostrarAlertaInfo("Éxito", "Datos actualizados correctamente.");
+            } catch (Exception e) {
+                mostrarAlertaInfo("Error", "Ocurrió un error al actualizar los datos: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void cargarInscripciones() {
+        if (personaLogueada != null) {
+            // Refrescar la persona desde la base de datos con sus participaciones cargadas
+            Persona personaActualizada = personaService.buscarPorDniConParticipaciones(personaLogueada.getDni());
+            if (personaActualizada != null) {
+                this.personaLogueada = personaActualizada;
+            }
+            
+            ObservableList<Evento> eventos = FXCollections.observableArrayList();
+            // Ahora las participaciones están cargadas (eager loading)
+            for (Participante p : personaLogueada.getParticipaciones()) {
+                eventos.add(p.getEvento());
+            }
+
+            colNombreEvento.setCellValueFactory(e -> new ReadOnlyStringWrapper(e.getValue().getNombre()));
+            colFechaInicio.setCellValueFactory(e -> new ReadOnlyStringWrapper(e.getValue().getFechaInicio().toString()));
+            colTipo.setCellValueFactory(e -> new ReadOnlyStringWrapper(e.getValue().getClass().getSimpleName()));
+
+            tablaInscripciones.setItems(eventos);
+        }
+    }
+
+    // Método público para refrescar las inscripciones desde otros controladores
+    public void refrescarInscripciones() {
+        cargarInscripciones();
+    }
+
+     //Metodo para mostrar alertas de informacion
+    private void mostrarAlertaInfo(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
 }

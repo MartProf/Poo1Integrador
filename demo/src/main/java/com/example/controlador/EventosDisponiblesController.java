@@ -1,5 +1,6 @@
 package com.example.controlador;
 
+import com.example.modelo.EstadoEvento;
 import com.example.modelo.Evento;
 import com.example.modelo.Persona;
 import com.example.servicio.EventoService;
@@ -10,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -52,7 +54,7 @@ public class EventosDisponiblesController {
     public EventosDisponiblesController() {
         EntityManager em = com.example.util.JpaUtil.getEntityManager();
         this.eventoService = new EventoService(em);
-        this.participanteService = new ParticipanteService(em);
+        this.participanteService = new ParticipanteService();
     }
 
     public void initialize() {
@@ -112,12 +114,31 @@ public class EventosDisponiblesController {
             {
                 btnInscribir.setOnAction(event -> {
                     Evento evento = getTableView().getItems().get(getIndex());
+                    if (evento.getEstado() != EstadoEvento.CONFIRMADO) {
+                        mostrarAlertaInfo("Evento no disponible", "El evento no está disponible para inscripción.");
+                        return;
+                    }
+                    
+                    // Verificar si ya está inscripto
+                    if (participanteService.estaInscripto(personaLogueada, evento)) {
+                        mostrarAlertaInfo("Ya inscripto", "Ya estás inscripto a este evento.");
+                        return;
+                    }
+                    
+                    if (evento instanceof com.example.modelo.TieneCupo) {
+                        com.example.modelo.TieneCupo cupoEvento = (com.example.modelo.TieneCupo) evento;
+                        int cupoDisponible = cupoEvento.getCupoMaximo() - evento.getParticipantes().size();
+                        if (cupoDisponible <= 0) {
+                            mostrarAlertaInfo("No hay cupo disponible", "No hay cupo disponible para este evento.");
+                            return;
+                        }
+                    }
                     try {
                         participanteService.inscribirPersona(evento, personaLogueada);
-                        System.out.println("Inscripción exitosa");
+                        mostrarAlertaInfo("Inscripción exitosa", "Te has inscrito correctamente al evento.");
                         cargarEventosDisponibles(); // refresca por si cambia cupo
                     } catch (Exception e) {
-                        System.out.println("Error al inscribirse: " + e.getMessage());
+                        mostrarAlertaInfo("Error al inscribirse", e.getMessage());
                     }
                 });
 
@@ -150,6 +171,25 @@ public class EventosDisponiblesController {
                 if (empty) {
                     setGraphic(null);
                 } else {
+                    Evento evento = getTableView().getItems().get(getIndex());
+
+                    // Validar si requiere inscripción: por ejemplo, estado == CONFIRMADO
+                    boolean requiereInscripcion = evento.getEstado() == EstadoEvento.CONFIRMADO;
+
+                    // Si tiene cupo (es instancia de TieneCupo), verificar cupo disponible
+                    boolean hayCupo = true;
+                    if (evento instanceof com.example.modelo.TieneCupo) {
+                        com.example.modelo.TieneCupo cupoEvento = (com.example.modelo.TieneCupo) evento;
+                        int cupoDisponible = cupoEvento.getCupoMaximo() - evento.getParticipantes().size();
+                        hayCupo = cupoDisponible > 0;
+                    }
+
+                    // Verificar si ya está inscripto
+                    boolean yaInscripto = personaLogueada != null && 
+                                         participanteService.estaInscripto(personaLogueada, evento);
+
+                    btnInscribir.setDisable(!(requiereInscripcion && hayCupo && !yaInscripto));
+
                     setGraphic(pane);
                 }
             }
@@ -158,5 +198,14 @@ public class EventosDisponiblesController {
 
     public void setPersonaLogueada(Persona persona) {
         this.personaLogueada = persona;
+    }
+
+    //Metodo para mostrar alertas de informacion
+    private void mostrarAlertaInfo(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }

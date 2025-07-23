@@ -2,7 +2,6 @@ package com.example.controlador;
 
 import com.example.modelo.Persona;
 import com.example.servicio.PersonaService;
-import jakarta.persistence.EntityManager;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -37,8 +36,7 @@ public class BuscarPersonaController {
     private List<Persona> seleccionadas = new ArrayList<>();
 
     public BuscarPersonaController() {
-        EntityManager em = com.example.util.JpaUtil.getEntityManager();
-        this.personaService = new PersonaService(em);
+        this.personaService = new PersonaService();
     }
 
     public void initialize() {

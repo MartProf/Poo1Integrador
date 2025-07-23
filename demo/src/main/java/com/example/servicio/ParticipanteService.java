@@ -7,15 +7,14 @@ import com.example.modelo.EstadoEvento;
 import com.example.modelo.TieneCupo;
 import com.example.repositorio.ParticipanteRepository;
 
-import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 
 public class ParticipanteService {
 
     private ParticipanteRepository participanteRepository;
 
-    public ParticipanteService(EntityManager em) {
-        this.participanteRepository = new ParticipanteRepository(em);
+    public ParticipanteService() {
+        this.participanteRepository = new ParticipanteRepository();
     }
 
     public void inscribirPersona(Evento evento, Persona persona) throws Exception {
@@ -37,5 +36,9 @@ public class ParticipanteService {
         } else {
             throw new Exception("El evento no está disponible para inscripción");
         }
+    }
+
+    public boolean estaInscripto(Persona persona, Evento evento) {
+        return participanteRepository.estaInscripto(persona, evento);
     }
 }
