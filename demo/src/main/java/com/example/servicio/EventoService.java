@@ -35,5 +35,8 @@ public class EventoService {
         return eventoRepo.findById(id);
     }
 
+    public void actualizarEvento(Evento evento) {
+        eventoRepo.actualizarEvento(evento);
+    }
     // Aquí irían reglas de negocio más complejas
 }

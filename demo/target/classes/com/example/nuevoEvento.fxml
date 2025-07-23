@@ -12,8 +12,12 @@
         <VBox spacing="10" alignment="TOP_LEFT" style="-fx-padding: 20;">
 
             <Label text="Crear Nuevo Evento" style="-fx-font-size: 20px;"/>
-
+            
             <!-- Campos comunes -->
+            <Label text="Tipo de evento:"/>
+            <ComboBox fx:id="cmbTipoEvento" onAction="#handleTipoEventoChanged"/>
+
+            
             <Label text="Nombre:"/>
             <TextField fx:id="txtNombre"/>
 
@@ -25,9 +29,6 @@
 
             <Label text="Estado:"/>
             <ComboBox fx:id="cmbEstado"/>
-
-            <Label text="Tipo de evento:"/>
-            <ComboBox fx:id="cmbTipoEvento" onAction="#handleTipoEventoChanged"/>
 
             <!-- Contenedor dinámico -->
             <VBox fx:id="panelCamposEspecificos" spacing="10" style="-fx-border-color: lightgray; -fx-padding: 10;"/>

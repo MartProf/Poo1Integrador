@@ -19,6 +19,7 @@
             <TableColumn fx:id="colTipo" text="Tipo"/>
             <TableColumn fx:id="colEstado" text="Estado"/>
             <TableColumn fx:id="colCupo" text="Cupo Disponible"/>
+            <TableColumn fx:id="colResponsables" text="Responsables"/>
             <TableColumn fx:id="colAcciones" text="Acciones"/>
         </columns>
     </TableView>

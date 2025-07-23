@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.controlador.DetallesEventoController"
+      spacing="10" style="-fx-padding: 20;" prefWidth="400">
+
+    <Label fx:id="lblNombre" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <Label fx:id="lblFecha"/>
+    <Label fx:id="lblDuracion"/>
+    <Label fx:id="lblEstado"/>
+    <Label fx:id="lblResponsables" wrapText="true" maxWidth="380"/>
+
+    <Separator/>
+
+    <!-- Contenedor para detalles específicos -->
+    <VBox fx:id="detalleEspecificoBox" spacing="5"/>
+
+    <Button text="Cerrar" onAction="#handleCerrar" maxWidth="100" alignment="CENTER"/>
+
+</VBox>

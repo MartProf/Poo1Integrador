@@ -53,6 +53,12 @@ public class EventoRepository {
         }
     }
 
+    public void actualizarEvento(Evento evento) {
+        em.getTransaction().begin();
+        em.merge(evento);
+        em.getTransaction().commit();
+    }
+    
     public void delete(Evento evento) {
         em.remove(em.contains(evento) ? evento : em.merge(evento));
     }

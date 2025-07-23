@@ -69,6 +69,9 @@ public class NuevoEventoController {
     private List<Pelicula> peliculasAgregadas = new ArrayList<>();
     private Label lblPeliculasSeleccionadas;
 
+    private boolean modoEdicion = false;
+    private Evento eventoAEditar;
+
     public NuevoEventoController() {
         EntityManager em = com.example.util.JpaUtil.getEntityManager();
         this.eventoService = new EventoService(em);
@@ -202,69 +205,147 @@ public class NuevoEventoController {
     @FXML
     public void handleGuardarEvento() {
         try {
+            // Validaciones generales
             String nombre = txtNombre.getText();
+            if (nombre == null || nombre.trim().isEmpty()) {
+                throw new IllegalArgumentException("El nombre del evento no puede estar vacío.");
+            }
+
             LocalDate fechaInicio = dateFechaInicio.getValue();
-            int duracion = Integer.parseInt(txtDuracion.getText());
+            if (fechaInicio == null) {
+                throw new IllegalArgumentException("Debe seleccionar una fecha de inicio.");
+            }
+
+            int duracion;
+            try {
+                duracion = Integer.parseInt(txtDuracion.getText());
+                if (duracion <= 0) {
+                    throw new IllegalArgumentException("La duración debe ser un número positivo.");
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("La duración debe ser un número válido.");
+            }
+
             EstadoEvento estado = cmbEstado.getValue();
+            if (estado == null) {
+                throw new IllegalArgumentException("Debe seleccionar un estado para el evento.");
+            }
+
             String tipo = cmbTipoEvento.getValue();
+            if (tipo == null || tipo.trim().isEmpty()) {
+                throw new IllegalArgumentException("Debe seleccionar un tipo de evento.");
+            }
 
             Evento evento;
-
-            switch (tipo) {
-                case "Feria" -> {
-                    Feria feria = new Feria();
-                    feria.setCantidadDeStand(Integer.parseInt(txtCantidadStands.getText()));
-                    feria.setAlAirelibre(chkAlAireLibre.isSelected());
-                    evento = feria;
+            if (modoEdicion && eventoAEditar != null) {
+                evento = eventoAEditar;
+            } else {
+                switch (tipo) {
+                    case "Feria" -> evento = new Feria();
+                    case "Concierto" -> evento = new Concierto();
+                    case "Exposicion" -> evento = new Exposicion();
+                    case "Taller" -> evento = new Taller();
+                    case "CicloDeCine" -> evento = new CicloDeCine();
+                    default -> throw new IllegalStateException("Tipo de evento no soportado");
                 }
-                case "Concierto" -> {
-                    Concierto concierto = new Concierto();
-                    concierto.setArtistas(artistasSeleccionados);
-                    concierto.setEntradaGratuita(chkEntradaGratuita.isSelected());
-                    evento = concierto;
-                }
-                case "Exposicion" -> {
-                    Exposicion exposicion = new Exposicion();
-                    exposicion.setTipoArte(txtTipoArte.getText());
-                    exposicion.setCurador(curadorSeleccionado);
-                    evento = exposicion;
-                }
-                case "Taller" -> {
-                    Taller taller = new Taller();
-                    taller.setCupoMaximo(Integer.parseInt(txtCupoMaximo.getText()));
-                    taller.setInstructor(instructorSeleccionado);
-                    taller.setModalidad(cmbModalidad.getValue());
-                    evento = taller;
-                }
-                case "CicloDeCine" -> {
-                    CicloDeCine ciclo = new CicloDeCine();
-                    ciclo.setHayCharlas(chkHayCharlas.isSelected());
-                    if (!peliculasAgregadas.isEmpty()) {
-                        ciclo.setPeliculas(peliculasAgregadas);
-                        // Sincronizar la relación bidireccional
-                        for (Pelicula pelicula : peliculasAgregadas) {
-                            pelicula.setCicloDeCine(ciclo);
-                        }
-                    } else {
-                        throw new IllegalArgumentException("Debe agregar al menos una película al ciclo de cine.");
-                    }
-                    evento = ciclo;
-                }
-                default -> throw new IllegalStateException("Tipo de evento no soportado");
             }
 
             evento.setNombre(nombre);
             evento.setFechaInicio(fechaInicio);
             evento.setDuraciónDias(duracion);
             evento.setEstado(estado);
-            evento.setResponsables(FXCollections.observableArrayList(personaLogueada));
+            mantenerResponsableEvento(evento);
 
-            eventoService.guardarEvento(evento);
-            System.out.println("Evento guardado: " + evento.getNombre());
+            // Validaciones y asignaciones específicas por tipo
+            switch (tipo) {
+                case "Feria" -> {
+                    int cantidad;
+                    try {
+                        cantidad = Integer.parseInt(txtCantidadStands.getText());
+                        if (cantidad <= 0) {
+                            throw new IllegalArgumentException("La cantidad de stands debe ser un número positivo.");
+                        }
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("La cantidad de stands debe ser un número válido.");
+                    }
+                    Feria feria = (Feria) evento;
+                    feria.setCantidadDeStand(cantidad);
+                    feria.setAlAirelibre(chkAlAireLibre.isSelected());
+                }
+
+                case "Concierto" -> {
+                    if (artistasSeleccionados == null || artistasSeleccionados.isEmpty()) {
+                        throw new IllegalArgumentException("Debe agregar al menos un artista al concierto.");
+                    }
+                    Concierto concierto = (Concierto) evento;
+                    concierto.setArtistas(artistasSeleccionados);
+                    concierto.setEntradaGratuita(chkEntradaGratuita.isSelected());
+                }
+
+                case "Exposicion" -> {
+                    String tipoArte = txtTipoArte.getText();
+                    if (tipoArte == null || tipoArte.trim().isEmpty()) {
+                        throw new IllegalArgumentException("Debe ingresar el tipo de arte.");
+                    }
+                    if (curadorSeleccionado == null) {
+                        throw new IllegalArgumentException("Debe seleccionar un curador.");
+                    }
+                    Exposicion exposicion = (Exposicion) evento;
+                    exposicion.setTipoArte(tipoArte);
+                    exposicion.setCurador(curadorSeleccionado);
+                }
+
+                case "Taller" -> {
+                    int cupo;
+                    try {
+                        cupo = Integer.parseInt(txtCupoMaximo.getText());
+                        if (cupo <= 0) {
+                            throw new IllegalArgumentException("El cupo máximo debe ser un número positivo.");
+                        }
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("El cupo máximo debe ser un número válido.");
+                    }
+                    if (instructorSeleccionado == null) {
+                        throw new IllegalArgumentException("Debe seleccionar un instructor.");
+                    }
+                    if (cmbModalidad.getValue() == null) {
+                        throw new IllegalArgumentException("Debe seleccionar una modalidad.");
+                    }
+                    Taller taller = (Taller) evento;
+                    taller.setCupoMaximo(cupo);
+                    taller.setInstructor(instructorSeleccionado);
+                    taller.setModalidad(cmbModalidad.getValue());
+                }
+
+                case "CicloDeCine" -> {
+                    if (peliculasAgregadas == null || peliculasAgregadas.isEmpty()) {
+                        throw new IllegalArgumentException("Debe agregar al menos una película al ciclo de cine.");
+                    }
+                    CicloDeCine ciclo = (CicloDeCine) evento;
+                    ciclo.setHayCharlas(chkHayCharlas.isSelected());
+                    ciclo.setPeliculas(peliculasAgregadas);
+                    for (Pelicula pelicula : peliculasAgregadas) {
+                        pelicula.setCicloDeCine(ciclo);
+                    }
+                }
+            }
+
+            // Guardar o actualizar
+            if (modoEdicion) {
+                eventoService.actualizarEvento(evento);
+                System.out.println("Evento actualizado: " + evento.getNombre());
+            } else {
+                eventoService.guardarEvento(evento);
+                System.out.println("Evento guardado: " + evento.getNombre());
+            }
+
             limpiarCampos();
+
+        } catch (IllegalArgumentException e) {
+            mostrarAlerta("Error de validación", e.getMessage());
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.out.println("Error al guardar evento: " + ex.getMessage());
+            mostrarAlerta("Error", "Error al guardar/actualizar evento: " + ex.getMessage());
         }
     }
 
@@ -284,6 +365,17 @@ public class NuevoEventoController {
         stage.showAndWait();
     }
 
+    private void mantenerResponsableEvento(Evento evento) {
+        if (!modoEdicion) {
+            // En creación, se inicializa con el responsable actual
+            evento.setResponsables(FXCollections.observableArrayList(personaLogueada));
+        } else {
+            // En edición, nos aseguramos de que la persona logueada esté entre los responsables
+            if (!evento.getResponsables().contains(personaLogueada)) {
+                evento.getResponsables().add(personaLogueada);
+            }
+        }
+    }
     
     private void limpiarCampos() {
         txtNombre.clear();
@@ -307,4 +399,75 @@ public class NuevoEventoController {
         }
     }
     
+    public void setModoEdicion(boolean modoEdicion) {
+        this.modoEdicion = modoEdicion;
+    }
+
+    public void cargarEventoParaEditar(Evento evento) {
+        this.eventoAEditar = evento;
+        this.modoEdicion = true;
+
+        // === CAMPOS COMUNES ===
+        txtNombre.setText(evento.getNombre());
+        dateFechaInicio.setValue(evento.getFechaInicio());
+        txtDuracion.setText(String.valueOf(evento.getDuraciónDias()));
+        cmbEstado.setValue(evento.getEstado());
+
+        // === CAMPOS ESPECIFICOS ===
+        String tipo;
+        if (evento instanceof Feria feria) {
+            tipo = "Feria";
+            cmbTipoEvento.setValue(tipo);
+            handleTipoEventoChanged();
+            txtCantidadStands.setText(String.valueOf(feria.getCantidadDeStand()));
+            chkAlAireLibre.setSelected(feria.isAlAirelibre());
+
+        } else if (evento instanceof Concierto concierto) {
+            tipo = "Concierto";
+            cmbTipoEvento.setValue(tipo);
+            handleTipoEventoChanged();
+            artistasSeleccionados.clear();
+            artistasSeleccionados.addAll(concierto.getArtistas());
+            lblArtistasSeleccionados.setText("Seleccionados: " + artistasSeleccionados.size());
+            chkEntradaGratuita.setSelected(concierto.isEntradaGratuita());
+
+        } else if (evento instanceof Exposicion exposicion) {
+            tipo = "Exposicion";
+            cmbTipoEvento.setValue(tipo);
+            handleTipoEventoChanged();
+            txtTipoArte.setText(exposicion.getTipoArte());
+            curadorSeleccionado = exposicion.getCurador();
+            lblCuradorSeleccionado.setText(curadorSeleccionado != null
+                ? curadorSeleccionado.getNombre() + " (" + curadorSeleccionado.getDni() + ")"
+                : "Ningún curador seleccionado");
+
+        } else if (evento instanceof Taller taller) {
+            tipo = "Taller";
+            cmbTipoEvento.setValue(tipo);
+            handleTipoEventoChanged();
+            txtCupoMaximo.setText(String.valueOf(taller.getCupoMaximo()));
+            instructorSeleccionado = taller.getInstructor();
+            lblInstructorSeleccionado.setText(instructorSeleccionado != null
+                ? instructorSeleccionado.getNombre() + " (" + instructorSeleccionado.getDni() + ")"
+                : "Ningún instructor seleccionado");
+            cmbModalidad.setValue(taller.getModalidad());
+
+        } else if (evento instanceof CicloDeCine ciclo) {
+            tipo = "CicloDeCine";
+            cmbTipoEvento.setValue(tipo);
+            handleTipoEventoChanged();
+            chkHayCharlas.setSelected(ciclo.isHayCharlas());
+            peliculasAgregadas = ciclo.getPeliculas();
+            lblPeliculasSeleccionadas.setText(peliculasAgregadas.size() + " película(s) seleccionada(s)");
+        }
+    }
+
+    //Metodo para mostrar alertas de error
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
 }

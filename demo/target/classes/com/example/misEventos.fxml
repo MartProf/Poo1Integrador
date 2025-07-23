@@ -12,12 +12,17 @@
         
         <Label text="Mis Eventos" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
 
-        <TableView fx:id="tablaMisEventos" prefWidth="800">
+        <TableView fx:id="tablaMisEventos" prefWidth="1200">
             <columns>
                 <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
                 <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
-                <TableColumn fx:id="colEstado" text="Estado" prefWidth="150"/>
-                <TableColumn fx:id="colAcciones" text="Acciones" prefWidth="200"/>
+                <TableColumn fx:id="colDuracion" text="Duración (días)" prefWidth="100"/>
+                <TableColumn fx:id="colTipo" text="Tipo" prefWidth="100"/>
+                <TableColumn fx:id="colInfoAdicional" text="Info Adicional" prefWidth="200"/>
+                <TableColumn fx:id="colTieneInscripcion" text="¿Inscripción?" prefWidth="100"/>
+                <TableColumn fx:id="colCantidadInscriptos" text="Inscriptos" prefWidth="100"/>
+                <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+                <TableColumn fx:id="colAcciones" text="Acciones" prefWidth="150"/>
             </columns>
         </TableView>
 

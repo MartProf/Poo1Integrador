@@ -20,7 +20,10 @@ public class DashboardController {
 
     private Persona personaLogueada;
 
-
+    @FXML
+    public void initialize() {
+        mostrarVistaEventosDisponibles();
+    }
 
     // Este método usamos desde SesionController
     public void setPersonaLogueada(Persona persona) {
@@ -76,6 +79,10 @@ public class DashboardController {
 
     @FXML
     private void handleEventosDisponibles() {
+        mostrarVistaEventosDisponibles();
+    }
+
+    public void mostrarVistaEventosDisponibles() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/eventos_disponibles.fxml"));
             Parent root = loader.load();
