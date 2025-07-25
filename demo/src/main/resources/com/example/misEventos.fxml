@@ -8,22 +8,106 @@
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.example.controlador.MisEventosController">
 
-    <VBox spacing="10" alignment="TOP_CENTER" style="-fx-padding: 20;">
+    <VBox spacing="15" alignment="TOP_CENTER" style="-fx-padding: 20;">
         
-        <Label text="Mis Eventos" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <!-- Título Principal -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="🏛️ Centro de Gestión Municipal de Eventos" 
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        </HBox>
+        
+        <!-- Panel de Resumen Estadístico -->
+        <HBox spacing="20" alignment="CENTER" style="-fx-background-color: #ecf0f1; -fx-padding: 15; -fx-background-radius: 8;">
+            <VBox alignment="CENTER" spacing="5">
+                <Label fx:id="lblTotalEventos" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                <Label text="Total Eventos" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="50"/>
+            <VBox alignment="CENTER" spacing="5">
+                <Label fx:id="lblEventosActivos" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                <Label text="Activos" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="50"/>
+            <VBox alignment="CENTER" spacing="5">
+                <Label fx:id="lblTotalParticipantes" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
+                <Label text="Participantes" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="50"/>
+            <VBox alignment="CENTER" spacing="5">
+                <Label fx:id="lblEventosProximos" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #f39c12;"/>
+                <Label text="Próximos 7 días" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+        </HBox>
+        
+        <!-- Panel de Filtros y Búsqueda -->
+        <VBox spacing="10" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 8;">
+            
+            <!-- Fila 1: Búsqueda -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="🔍 Búsqueda:" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtBusqueda" promptText="Buscar por nombre del evento..." prefWidth="300"/>
+                <Button fx:id="btnBuscar" text="Buscar" style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                <Button fx:id="btnLimpiarBusqueda" text="Limpiar" style="-fx-background-color: #95a5a6; -fx-text-fill: white;"/>
+            </HBox>
+            
+            <!-- Fila 2: Filtros -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="📋 Filtros:" style="-fx-font-weight: bold;"/>
+                
+                <VBox spacing="3">
+                    <Label text="Tipo:" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                    <ComboBox fx:id="cmbTipo" prefWidth="120" promptText="Todos"/>
+                </VBox>
+                
+                <VBox spacing="3">
+                    <Label text="Estado:" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                    <ComboBox fx:id="cmbEstado" prefWidth="120" promptText="Todos"/>
+                </VBox>
+                
+                <VBox spacing="3">
+                    <Label text="Responsable:" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                    <ComboBox fx:id="cmbResponsable" prefWidth="150" promptText="Todos"/>
+                </VBox>
+                
+                <Button fx:id="btnAplicarFiltros" text="Aplicar Filtros" 
+                        style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                <Button fx:id="btnLimpiarFiltros" text="Limpiar Filtros" 
+                        style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+        
+        <!-- Información de Resultados -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label fx:id="lblResultados" text="Mostrando 0 eventos" 
+                   style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnActualizar" text="🔄 Actualizar" 
+                    style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+        </HBox>
 
-        <TableView fx:id="tablaMisEventos" prefWidth="1200">
+        <!-- Tabla Principal de Eventos -->
+        <TableView fx:id="tablaMisEventos" prefWidth="1400" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
-                <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
-                <TableColumn fx:id="colDuracion" text="Duración (días)" prefWidth="100"/>
+                <TableColumn fx:id="colNombre" text="Nombre" prefWidth="180"/>
+                <TableColumn fx:id="colFecha" text="Fecha Inicio" prefWidth="100"/>
+                <TableColumn fx:id="colDuracion" text="Duración" prefWidth="80"/>
                 <TableColumn fx:id="colTipo" text="Tipo" prefWidth="100"/>
-                <TableColumn fx:id="colInfoAdicional" text="Info Adicional" prefWidth="200"/>
-                <TableColumn fx:id="colTieneInscripcion" text="¿Inscripción?" prefWidth="100"/>
-                <TableColumn fx:id="colCantidadInscriptos" text="Inscriptos" prefWidth="100"/>
+                <TableColumn fx:id="colResponsables" text="Responsables" prefWidth="150"/>
+                <TableColumn fx:id="colInfoAdicional" text="Información Adicional" prefWidth="200"/>
+                <TableColumn fx:id="colTieneInscripcion" text="¿Inscripción?" prefWidth="90"/>
+                <TableColumn fx:id="colCantidadInscriptos" text="Participantes" prefWidth="90"/>
                 <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
-                <TableColumn fx:id="colAcciones" text="Acciones" prefWidth="150"/>
+                <TableColumn fx:id="colAcciones" text="Acciones" prefWidth="200"/>
             </columns>
+            
+            <placeholder>
+                <VBox alignment="CENTER" spacing="10">
+                    <Label text="📅 No hay eventos para mostrar" 
+                           style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d;"/>
+                    <Label text="Usa los filtros para refinar tu búsqueda o crear un nuevo evento" 
+                           style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+            </placeholder>
         </TableView>
 
     </VBox>

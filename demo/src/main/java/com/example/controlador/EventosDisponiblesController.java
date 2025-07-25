@@ -5,7 +5,6 @@ import com.example.modelo.Evento;
 import com.example.modelo.Persona;
 import com.example.servicio.EventoService;
 import com.example.servicio.ParticipanteService;
-import jakarta.persistence.EntityManager;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -52,8 +51,7 @@ public class EventosDisponiblesController {
     private ParticipanteService participanteService;
 
     public EventosDisponiblesController() {
-        EntityManager em = com.example.util.JpaUtil.getEntityManager();
-        this.eventoService = new EventoService(em);
+        this.eventoService = new EventoService();
         this.participanteService = new ParticipanteService();
     }
 
@@ -114,8 +112,21 @@ public class EventosDisponiblesController {
             {
                 btnInscribir.setOnAction(event -> {
                     Evento evento = getTableView().getItems().get(getIndex());
+                    
+                    // Verificar que hay una persona logueada
+                    if (personaLogueada == null) {
+                        mostrarAlertaInfo("Acceso denegado", "Debes iniciar sesión para inscribirte a eventos.");
+                        return;
+                    }
+                    
                     if (evento.getEstado() != EstadoEvento.CONFIRMADO) {
                         mostrarAlertaInfo("Evento no disponible", "El evento no está disponible para inscripción.");
+                        return;
+                    }
+                    
+                    // Verificar si es responsable del evento
+                    if (eventoService.esResponsableDelEvento(personaLogueada, evento)) {
+                        mostrarAlertaInfo("No puedes inscribirte", "No puedes inscribirte a un evento del cual eres responsable.");
                         return;
                     }
                     
@@ -188,7 +199,14 @@ public class EventosDisponiblesController {
                     boolean yaInscripto = personaLogueada != null && 
                                          participanteService.estaInscripto(personaLogueada, evento);
 
-                    btnInscribir.setDisable(!(requiereInscripcion && hayCupo && !yaInscripto));
+                    // Verificar si es responsable del evento
+                    boolean esResponsable = personaLogueada != null && 
+                                           eventoService.esResponsableDelEvento(personaLogueada, evento);
+
+                    // Verificar si hay una persona logueada
+                    boolean hayPersonaLogueada = personaLogueada != null;
+
+                    btnInscribir.setDisable(!(hayPersonaLogueada && requiereInscripcion && hayCupo && !yaInscripto && !esResponsable));
 
                     setGraphic(pane);
                 }
@@ -198,6 +216,7 @@ public class EventosDisponiblesController {
 
     public void setPersonaLogueada(Persona persona) {
         this.personaLogueada = persona;
+        cargarEventosDisponibles(); // Recargar eventos cuando se establece el usuario
     }
 
     //Metodo para mostrar alertas de informacion

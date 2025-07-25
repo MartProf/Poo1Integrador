@@ -17,7 +17,7 @@
             <!-- Botones de navegación -->
             <Button text="Eventos Disponibles" fx:id="btnEventosDisponibles" onAction="#handleEventosDisponibles"
                     style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 16px;"/>
-            <Button text="Mis Eventos" fx:id="btnMisEventos" onAction="#handleMisEventos"
+            <Button text="Gestión de Eventos" fx:id="btnMisEventos" onAction="#handleMisEventos"
                     style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 16px;"/>
             <Button text="Nuevo Evento" fx:id="btnNuevoEvento" onAction="#handleNuevoEvento"
                     style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 16px;"/>

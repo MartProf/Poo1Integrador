@@ -25,6 +25,10 @@ public class PersonaService {
         return personaRepo.findByNombreContaining(nombre);
     }
 
+    public List<Persona> obtenerTodas() {
+        return personaRepo.findAll();
+    }
+
     public void registrarPersona(Persona persona) {
         // Validaciones básicas de campos obligatorios
         if (persona.getNombre() == null || persona.getNombre().trim().isEmpty()) {
@@ -94,6 +98,34 @@ public class PersonaService {
         }
         
         return personaRepo.buscarPersonaPorUsuarioYContrasena(usuario.trim(), contrasena);
+    }
+
+    public Persona guardarPersonaSimple(Persona persona) {
+        // Validaciones básicas de campos obligatorios para registro simple
+        if (persona.getNombre() == null || persona.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre es obligatorio.");
+        }
+        if (persona.getApellido() == null || persona.getApellido().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido es obligatorio.");
+        }
+        if (persona.getDni() <= 0) {
+            throw new IllegalArgumentException("El DNI debe ser un número positivo.");
+        }
+
+        // Validación de unicidad de DNI
+        if (personaRepo.existeDni(persona.getDni())) {
+            throw new IllegalArgumentException("Ya existe una persona registrada con este DNI.");
+        }
+
+        // Limpiar datos y guardar
+        persona.setNombre(persona.getNombre().trim());
+        persona.setApellido(persona.getApellido().trim());
+        if (persona.getEmail() != null) {
+            persona.setEmail(persona.getEmail().trim());
+        }
+        
+        personaRepo.save(persona);
+        return persona;
     }
 }
 

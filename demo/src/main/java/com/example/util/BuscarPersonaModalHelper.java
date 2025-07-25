@@ -23,7 +23,18 @@ public class BuscarPersonaModalHelper {
             Stage stage = new Stage();
             stage.setTitle("Buscar Persona");
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root));
+            stage.setResizable(true); // ✅ Permitir redimensionar
+            
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            
+            // ✅ Centrar la ventana y asegurar que esté completamente visible
+            stage.centerOnScreen();
+            
+            // ✅ Configurar tamaño mínimo
+            stage.setMinWidth(500);
+            stage.setMinHeight(400);
+            
             stage.showAndWait();
 
             return controller.getSeleccionada();
@@ -45,7 +56,18 @@ public class BuscarPersonaModalHelper {
             Stage stage = new Stage();
             stage.setTitle("Buscar Personas");
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root));
+            stage.setResizable(true); // ✅ Permitir redimensionar
+            
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            
+            // ✅ Centrar la ventana y asegurar que esté completamente visible
+            stage.centerOnScreen();
+            
+            // ✅ Configurar tamaño mínimo
+            stage.setMinWidth(500);
+            stage.setMinHeight(400);
+            
             stage.showAndWait();
 
             return controller.getSeleccionadas();

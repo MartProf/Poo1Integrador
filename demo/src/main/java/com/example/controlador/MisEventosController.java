@@ -2,18 +2,13 @@ package com.example.controlador;
 
 import com.example.modelo.*;
 import com.example.servicio.EventoService;
-import com.example.util.JpaUtil;
-
-import jakarta.persistence.EntityManager;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -45,13 +40,54 @@ public class MisEventosController {
     private TableColumn<Evento, String> colEstado;
     @FXML
     private TableColumn<Evento, Void> colAcciones;
+    @FXML
+    private TableColumn<Evento, String> colResponsables; // Nueva columna
+
+    // Labels de estadísticas
+    @FXML
+    private Label lblTotalEventos;
+    @FXML
+    private Label lblEventosActivos;
+    @FXML
+    private Label lblTotalParticipantes;
+    @FXML
+    private Label lblEventosProximos;
+
+    // Búsqueda
+    @FXML
+    private TextField txtBusqueda;
+    @FXML
+    private Button btnBuscar;
+    @FXML
+    private Button btnLimpiarBusqueda;
+
+    // Filtros
+    @FXML
+    private ComboBox<String> cmbTipo;
+    @FXML
+    private ComboBox<String> cmbEstado;
+    @FXML
+    private ComboBox<String> cmbResponsable;
+    @FXML
+    private Button btnAplicarFiltros;
+    @FXML
+    private Button btnLimpiarFiltros;
+
+    // Información y acciones
+    @FXML
+    private Label lblResultados;
+    @FXML
+    private Button btnActualizar;
 
     private Persona personaLogueada;
     private EventoService eventoService;
+    
+    // Listas para filtrado
+    private List<Evento> todosLosEventos;
+    private ObservableList<Evento> eventosFiltrados;
 
     public MisEventosController() {
-        EntityManager em = JpaUtil.getEntityManager();
-        this.eventoService = new EventoService(em);
+        this.eventoService = new EventoService();
     }
 
     private String determinarSiRequiereInscripcion(Evento evento) {
@@ -82,12 +118,17 @@ public class MisEventosController {
 
     public void setPersonaLogueada(Persona persona) {
         this.personaLogueada = persona;
-        cargarMisEventos();
+        // FASE 2: Cambiar a cargar todos los eventos para gestión municipal
+        cargarTodosLosEventos();
     }
 
     @FXML
     public void initialize() {
         initColumns();
+        initComboBoxes();
+        initEventHandlers();
+        // Inicializar estadísticas en 0 hasta que se carguen los datos
+        actualizarEstadisticas();
     }
 
     private void initColumns() {
@@ -130,6 +171,11 @@ public class MisEventosController {
             new javafx.beans.property.SimpleStringProperty(
                 formatearEstado(data.getValue().getEstado())));
 
+        // Columna Responsables (nueva)
+        colResponsables.setCellValueFactory(data -> 
+            new javafx.beans.property.SimpleStringProperty(
+                obtenerResponsables(data.getValue())));
+
         // Columna Acciones (botones)
         colAcciones.setCellFactory(getBotonAccionesCellFactory());
     }
@@ -160,9 +206,16 @@ public class MisEventosController {
                 
         } else if (evento instanceof Concierto) {
             Concierto concierto = (Concierto) evento;
+            int cantidadArtistas = 0;
+            try {
+                cantidadArtistas = concierto.getArtistas() != null ? concierto.getArtistas().size() : 0;
+            } catch (Exception e) {
+                // LazyInitializationException resuelto en EventoRepository.findAllWithRelations()
+                cantidadArtistas = 0;
+            }
             return String.format("Entrada: %s, Artistas: %d", 
                 concierto.isEntradaGratuita() ? "Gratuita" : "Paga",
-                concierto.getArtistas() != null ? concierto.getArtistas().size() : 0);
+                cantidadArtistas);
                 
         } else if (evento instanceof Exposicion) {
             Exposicion exposicion = (Exposicion) evento;
@@ -179,9 +232,16 @@ public class MisEventosController {
                 
         } else if (evento instanceof CicloDeCine) {
             CicloDeCine ciclo = (CicloDeCine) evento;
+            int cantidadPeliculas = 0;
+            try {
+                cantidadPeliculas = ciclo.getPeliculas() != null ? ciclo.getPeliculas().size() : 0;
+            } catch (Exception e) {
+                // LazyInitializationException resuelto en EventoRepository.findAllWithRelations()
+                cantidadPeliculas = 0;
+            }
             return String.format("%s, Películas: %d", 
                 ciclo.isHayCharlas() ? "Con charlas" : "Sin charlas",
-                ciclo.getPeliculas() != null ? ciclo.getPeliculas().size() : 0);
+                cantidadPeliculas);
                 
         } else {
             return "Ver detalles";
@@ -196,13 +256,273 @@ public class MisEventosController {
         return 0;
     }
 
+    private String obtenerResponsables(Evento evento) {
+        // Obtener lista de responsables del evento
+        if (evento.getResponsables() != null && !evento.getResponsables().isEmpty()) {
+            if (evento.getResponsables().size() == 1) {
+                Persona responsable = evento.getResponsables().get(0);
+                return responsable.getNombre() + " " + responsable.getApellido();
+            } else {
+                // Si hay múltiples responsables, mostrar cantidad
+                return evento.getResponsables().size() + " responsables";
+            }
+        }
+        return "Sin asignar";
+    }
+
+    private void initComboBoxes() {
+        // Inicializar ComboBox de tipos
+        cmbTipo.setItems(FXCollections.observableArrayList(
+            "Todos", "Feria", "Concierto", "Exposición", "Taller", "Ciclo de Cine"
+        ));
+        cmbTipo.getSelectionModel().select("Todos");
+
+        // Inicializar ComboBox de estados
+        cmbEstado.setItems(FXCollections.observableArrayList(
+            "Todos", "Planificado", "Confirmado", "En Ejecución", "Finalizado"
+        ));
+        cmbEstado.getSelectionModel().select("Todos");
+
+        // ComboBox de responsables se llenará dinámicamente
+        cmbResponsable.setItems(FXCollections.observableArrayList("Todos"));
+        cmbResponsable.getSelectionModel().select("Todos");
+    }
+
+    private void initEventHandlers() {
+        // Eventos de búsqueda
+        if (btnBuscar != null) {
+            btnBuscar.setOnAction(e -> aplicarBusqueda());
+        }
+        if (btnLimpiarBusqueda != null) {
+            btnLimpiarBusqueda.setOnAction(e -> limpiarBusqueda());
+        }
+        
+        // Búsqueda en tiempo real
+        if (txtBusqueda != null) {
+            txtBusqueda.textProperty().addListener((observable, oldValue, newValue) -> {
+                aplicarBusqueda();
+            });
+        }
+
+        // Eventos de filtros
+        if (btnAplicarFiltros != null) {
+            btnAplicarFiltros.setOnAction(e -> aplicarFiltros());
+        }
+        if (btnLimpiarFiltros != null) {
+            btnLimpiarFiltros.setOnAction(e -> limpiarFiltros());
+        }
+        
+        // FASE 4: Filtros automáticos al cambiar ComboBox
+        if (cmbTipo != null) {
+            cmbTipo.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> aplicarFiltros());
+        }
+        if (cmbEstado != null) {
+            cmbEstado.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> aplicarFiltros());
+        }
+        if (cmbResponsable != null) {
+            cmbResponsable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> aplicarFiltros());
+        }
+
+        // Evento de actualizar
+        if (btnActualizar != null) {
+            btnActualizar.setOnAction(e -> cargarTodosLosEventos());
+        }
+    }
+
+    private void actualizarEstadisticas() {
+        // Método sobrecargado para inicialización
+        actualizarEstadisticas(FXCollections.emptyObservableList());
+    }
+
+    private void actualizarEstadisticas(List<Evento> eventos) {
+        if (eventos == null) eventos = FXCollections.emptyObservableList();
+        
+        // Calcular estadísticas reales
+        int totalEventos = eventos.size();
+        
+        // Contar eventos activos (Confirmado y En Ejecución)
+        int eventosActivos = (int) eventos.stream()
+            .filter(e -> e.getEstado() == EstadoEvento.CONFIRMADO || 
+                        e.getEstado() == EstadoEvento.EN_EJECUCION)
+            .count();
+        
+        // Contar total de participantes
+        int totalParticipantes = eventos.stream()
+            .mapToInt(e -> e.getParticipantes() != null ? e.getParticipantes().size() : 0)
+            .sum();
+        
+        // Contar eventos próximos (próximos 7 días)
+        java.time.LocalDate hoy = java.time.LocalDate.now();
+        java.time.LocalDate proximaSemana = hoy.plusDays(7);
+        int eventosProximos = (int) eventos.stream()
+            .filter(e -> e.getFechaInicio() != null && 
+                        !e.getFechaInicio().isBefore(hoy) && 
+                        !e.getFechaInicio().isAfter(proximaSemana))
+            .count();
+        
+        // Actualizar labels
+        if (lblTotalEventos != null) lblTotalEventos.setText(String.valueOf(totalEventos));
+        if (lblEventosActivos != null) lblEventosActivos.setText(String.valueOf(eventosActivos));
+        if (lblTotalParticipantes != null) lblTotalParticipantes.setText(String.valueOf(totalParticipantes));
+        if (lblEventosProximos != null) lblEventosProximos.setText(String.valueOf(eventosProximos));
+    }
+
+    private void actualizarInformacionResultados(List<Evento> eventos) {
+        if (eventos == null) eventos = FXCollections.emptyObservableList();
+        String mensaje = String.format("Mostrando %d evento%s", 
+                                      eventos.size(), 
+                                      eventos.size() == 1 ? "" : "s");
+        if (lblResultados != null) {
+            lblResultados.setText(mensaje);
+        }
+    }
+
+    // Métodos de búsqueda y filtros 
+    private void aplicarBusqueda() {
+        // FASE 4: Integrar búsqueda con filtros
+        aplicarFiltros(); // Ahora la búsqueda es parte del sistema de filtros integral
+    }
+
+    private void limpiarBusqueda() {
+        // FASE 4: Limpiar solo búsqueda, mantener filtros
+        if (txtBusqueda != null) {
+            txtBusqueda.clear();
+        }
+        
+        // Reaplicar filtros sin búsqueda
+        aplicarFiltros();
+    }
+
+    private void aplicarFiltros() {
+        // FASE 4: Implementar filtros combinados
+        if (todosLosEventos == null || eventosFiltrados == null) return;
+        
+        String tipoSeleccionado = cmbTipo.getSelectionModel().getSelectedItem();
+        String estadoSeleccionado = cmbEstado.getSelectionModel().getSelectedItem();
+        String responsableSeleccionado = cmbResponsable.getSelectionModel().getSelectedItem();
+        String textoBusqueda = txtBusqueda.getText();
+        
+        // Empezar con todos los eventos
+        List<Evento> eventosFiltradosTemp = new java.util.ArrayList<>(todosLosEventos);
+        
+        // Aplicar filtro de búsqueda por nombre
+        if (textoBusqueda != null && !textoBusqueda.trim().isEmpty()) {
+            String busquedaLower = textoBusqueda.trim().toLowerCase();
+            eventosFiltradosTemp = eventosFiltradosTemp.stream()
+                .filter(evento -> evento.getNombre().toLowerCase().contains(busquedaLower))
+                .collect(java.util.stream.Collectors.toList());
+        }
+        
+        // Aplicar filtro por tipo
+        if (tipoSeleccionado != null && !tipoSeleccionado.equals("Todos")) {
+            eventosFiltradosTemp = eventosFiltradosTemp.stream()
+                .filter(evento -> obtenerTipoEvento(evento).equals(tipoSeleccionado))
+                .collect(java.util.stream.Collectors.toList());
+        }
+        
+        // Aplicar filtro por estado
+        if (estadoSeleccionado != null && !estadoSeleccionado.equals("Todos")) {
+            eventosFiltradosTemp = eventosFiltradosTemp.stream()
+                .filter(evento -> formatearEstado(evento.getEstado()).equals(estadoSeleccionado))
+                .collect(java.util.stream.Collectors.toList());
+        }
+        
+        // Aplicar filtro por responsable
+        if (responsableSeleccionado != null && !responsableSeleccionado.equals("Todos")) {
+            eventosFiltradosTemp = eventosFiltradosTemp.stream()
+                .filter(evento -> {
+                    if (evento.getResponsables() == null) return false;
+                    return evento.getResponsables().stream()
+                        .anyMatch(persona -> 
+                            (persona.getNombre() + " " + persona.getApellido()).equals(responsableSeleccionado));
+                })
+                .collect(java.util.stream.Collectors.toList());
+        }
+        
+        // Actualizar tabla y estadísticas
+        eventosFiltrados.setAll(eventosFiltradosTemp);
+        actualizarInformacionResultados(eventosFiltrados);
+        
+        // FASE 4: Actualizar estadísticas según filtros aplicados
+        // Si no hay filtros aplicados, usar estadísticas globales, sino usar filtradas
+        boolean hayFiltrosAplicados = 
+            (tipoSeleccionado != null && !tipoSeleccionado.equals("Todos")) ||
+            (estadoSeleccionado != null && !estadoSeleccionado.equals("Todos")) ||
+            (responsableSeleccionado != null && !responsableSeleccionado.equals("Todos")) ||
+            (textoBusqueda != null && !textoBusqueda.trim().isEmpty());
+            
+        if (hayFiltrosAplicados) {
+            // Mostrar estadísticas de los eventos filtrados
+            actualizarEstadisticas(eventosFiltradosTemp);
+        } else {
+            // Mostrar estadísticas globales
+            actualizarEstadisticas(todosLosEventos);
+        }
+    }
+
+    private void limpiarFiltros() {
+        // FASE 4: Limpiar todos los filtros y búsqueda
+        if (cmbTipo != null) cmbTipo.getSelectionModel().select("Todos");
+        if (cmbEstado != null) cmbEstado.getSelectionModel().select("Todos");
+        if (cmbResponsable != null) cmbResponsable.getSelectionModel().select("Todos");
+        if (txtBusqueda != null) txtBusqueda.clear();
+        
+        // Restablecer todos los eventos
+        if (eventosFiltrados != null && todosLosEventos != null) {
+            eventosFiltrados.setAll(todosLosEventos);
+            actualizarInformacionResultados(eventosFiltrados);
+            // Restablecer estadísticas globales
+            actualizarEstadisticas(todosLosEventos);
+        }
+    }
+
+    private void cargarTodosLosEventos() {
+        // FASE 2: Cargar TODOS los eventos del sistema
+        todosLosEventos = eventoService.getTodosLosEventos();
+        
+        // Inicializar la lista filtrada con todos los eventos
+        eventosFiltrados = FXCollections.observableArrayList(todosLosEventos);
+        tablaMisEventos.setItems(eventosFiltrados);
+        
+        // FASE 4: Llenar ComboBox de responsables dinámicamente
+        actualizarComboBoxResponsables();
+        
+        // Actualizar estadísticas y resultados
+        actualizarEstadisticas(todosLosEventos);
+        actualizarInformacionResultados(eventosFiltrados);
+    }
+
+    private void actualizarComboBoxResponsables() {
+        // FASE 4: Llenar ComboBox con responsables únicos
+        if (cmbResponsable != null && todosLosEventos != null) {
+            // Obtener todos los responsables únicos
+            List<String> responsablesUnicos = todosLosEventos.stream()
+                .flatMap(evento -> evento.getResponsables() != null ? 
+                    evento.getResponsables().stream() : java.util.stream.Stream.empty())
+                .distinct()
+                .map(persona -> persona.getNombre() + " " + persona.getApellido())
+                .sorted()
+                .collect(java.util.stream.Collectors.toList());
+            
+            // Agregar "Todos" al inicio
+            responsablesUnicos.add(0, "Todos");
+            
+            // Actualizar ComboBox
+            cmbResponsable.setItems(FXCollections.observableArrayList(responsablesUnicos));
+            cmbResponsable.getSelectionModel().select("Todos");
+        }
+    }
+/*
     private void cargarMisEventos() {
         if (personaLogueada != null) {
             List<Evento> eventos = eventoService.getEventosPorResponsable(personaLogueada);
             tablaMisEventos.setItems(FXCollections.observableArrayList(eventos));
         }
     }
-
+ */
     private Callback<TableColumn<Evento, Void>, TableCell<Evento, Void>> getBotonAccionesCellFactory() {
         return param -> new TableCell<>() {
             private final Button btnEditar = new Button("Editar");
@@ -252,7 +572,7 @@ public class MisEventosController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
-            cargarMisEventos(); // Recargar tabla después de editar
+            cargarTodosLosEventos(); // Recargar tabla después de editar
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -263,7 +583,7 @@ public class MisEventosController {
         // Aquí podrías agregar una confirmación antes de eliminar
         System.out.println("Eliminar evento: " + evento.getNombre());
         eventoService.eliminarEvento(evento);
-        cargarMisEventos(); // Recargar tabla después de eliminar
+        cargarTodosLosEventos(); // Recargar tabla después de eliminar
     }
 
 }

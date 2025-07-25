@@ -37,10 +37,10 @@
         <Label layoutX="76.0" layoutY="243.0" text="Email:" />
         <TextField fx:id="txtEmail" layoutX="150.0" layoutY="240.0" prefHeight="25.0" prefWidth="246.0" />
 
-        <Label layoutX="76.0" layoutY="283.0" text="Usuario:" />
+        <Label fx:id="lblUsuario" layoutX="76.0" layoutY="283.0" text="Usuario:" />
         <TextField fx:id="txtUsuario" layoutX="150.0" layoutY="280.0" prefHeight="25.0" prefWidth="246.0" />
 
-        <Label layoutX="76.0" layoutY="323.0" text="Contraseña:" />
+        <Label fx:id="lblContrasena" layoutX="76.0" layoutY="323.0" text="Contraseña:" />
         <PasswordField fx:id="txtContrasena" layoutX="150.0" layoutY="320.0" prefHeight="25.0" prefWidth="246.0" />
 
         <!-- Botones -->

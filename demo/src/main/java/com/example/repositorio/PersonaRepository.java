@@ -51,6 +51,16 @@ public class PersonaRepository {
         }
     }
 
+    public List<Persona> findAll() {
+        EntityManager em = getEntityManager();
+        try {
+            return em.createQuery("SELECT p FROM Persona p ORDER BY p.apellido, p.nombre", Persona.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public void save(Persona persona) {
         EntityManager em = getEntityManager();
         EntityTransaction tx = em.getTransaction();

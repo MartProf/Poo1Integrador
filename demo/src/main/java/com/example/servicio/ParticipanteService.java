@@ -18,6 +18,14 @@ public class ParticipanteService {
     }
 
     public void inscribirPersona(Evento evento, Persona persona) throws Exception {
+        // Validar que los parámetros no sean null
+        if (evento == null) {
+            throw new Exception("El evento no puede ser null");
+        }
+        if (persona == null) {
+            throw new Exception("La persona no puede ser null");
+        }
+        
         if (evento.getEstado() == EstadoEvento.CONFIRMADO || evento.getEstado() == EstadoEvento.EN_EJECUCION) {
 
             if (evento instanceof TieneCupo tieneCupo) {

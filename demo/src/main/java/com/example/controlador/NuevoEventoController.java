@@ -3,7 +3,6 @@ package com.example.controlador;
 import com.example.modelo.*;
 import com.example.servicio.EventoService;
 import com.example.util.BuscarPersonaModalHelper;
-import jakarta.persistence.EntityManager;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,6 +37,21 @@ public class NuevoEventoController {
     @FXML
     private VBox panelCamposEspecificos;
 
+    @FXML
+    private Button btnAgregarResponsable;
+
+    @FXML
+    private Label lblCantidadResponsables;
+
+    @FXML
+    private ListView<Persona> listResponsables;
+
+    @FXML
+    private Button btnCancelar;
+
+    @FXML
+    private Label lblSubtitulo;
+
     // Campos específicos
     private TextField txtCantidadStands;
     private CheckBox chkAlAireLibre;
@@ -63,6 +76,8 @@ public class NuevoEventoController {
     private Button btnBuscarArtistas;
     private Label lblArtistasSeleccionados;
 
+    private List<Persona> responsablesSeleccionados = new ArrayList<>();
+
     private EventoService eventoService;
     private Persona personaLogueada;
 
@@ -73,8 +88,7 @@ public class NuevoEventoController {
     private Evento eventoAEditar;
 
     public NuevoEventoController() {
-        EntityManager em = com.example.util.JpaUtil.getEntityManager();
-        this.eventoService = new EventoService(em);
+        this.eventoService = new EventoService();
     }
 
     @FXML
@@ -86,6 +100,67 @@ public class NuevoEventoController {
 
         cmbEstado.setItems(FXCollections.observableArrayList(EstadoEvento.values()));
         cmbEstado.getSelectionModel().select(EstadoEvento.PLANIFICADO);
+        
+        // Inicializar lista de responsables
+        actualizarListaResponsables();
+        
+        // Configurar botón cancelar
+        if (btnCancelar != null) {
+            btnCancelar.setOnAction(e -> handleCancelar());
+        }
+    }
+
+    @FXML
+    private void handleAgregarResponsable() {
+        try {
+            // Abrir modal para buscar/agregar persona
+            Persona personaSeleccionada = BuscarPersonaModalHelper.abrirSeleccionSimple();
+            
+            if (personaSeleccionada != null) {
+                // Verificar que no esté ya en la lista
+                if (!responsablesSeleccionados.contains(personaSeleccionada)) {
+                    responsablesSeleccionados.add(personaSeleccionada);
+                    actualizarListaResponsables();
+                } else {
+                    mostrarAlerta("Información", "Esta persona ya está agregada como responsable.");
+                }
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al seleccionar responsable: " + e.getMessage());
+        }
+    }
+
+    private void actualizarListaResponsables() {
+        listResponsables.setItems(FXCollections.observableArrayList(responsablesSeleccionados));
+        lblCantidadResponsables.setText(responsablesSeleccionados.size() + " responsable(s) seleccionado(s)");
+        
+        // Configurar cómo se muestra cada persona en la lista
+        listResponsables.setCellFactory(param -> new ListCell<Persona>() {
+            @Override
+            protected void updateItem(Persona persona, boolean empty) {
+                super.updateItem(persona, empty);
+                if (empty || persona == null) {
+                    setText(null);
+                } else {
+                    setText(persona.getNombre() + " " + persona.getApellido() + " (DNI: " + persona.getDni() + ")");
+                }
+            }
+        });
+        
+        // Permitir eliminar con doble click
+        listResponsables.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Persona personaSeleccionada = listResponsables.getSelectionModel().getSelectedItem();
+                if (personaSeleccionada != null) {
+                    eliminarResponsable(personaSeleccionada);
+                }
+            }
+        });
+    }
+    
+    private void eliminarResponsable(Persona persona) {
+        responsablesSeleccionados.remove(persona);
+        actualizarListaResponsables();
     }
 
     @FXML
@@ -367,10 +442,16 @@ public class NuevoEventoController {
 
     private void mantenerResponsableEvento(Evento evento) {
         if (!modoEdicion) {
-            // En creación, se inicializa con el responsable actual
-            evento.setResponsables(FXCollections.observableArrayList(personaLogueada));
+            // En creación, usar la lista de responsables seleccionados
+            if (responsablesSeleccionados.isEmpty()) {
+                // Si no hay responsables seleccionados, agregar la persona logueada como mínimo
+                responsablesSeleccionados.add(personaLogueada);
+                actualizarListaResponsables();
+            }
+            evento.setResponsables(FXCollections.observableArrayList(responsablesSeleccionados));
         } else {
-            // En edición, nos aseguramos de que la persona logueada esté entre los responsables
+            // En edición, usar la lista actual y asegurar que la persona logueada esté incluida
+            evento.setResponsables(FXCollections.observableArrayList(responsablesSeleccionados));
             if (!evento.getResponsables().contains(personaLogueada)) {
                 evento.getResponsables().add(personaLogueada);
             }
@@ -384,6 +465,10 @@ public class NuevoEventoController {
         cmbEstado.getSelectionModel().select(EstadoEvento.PLANIFICADO);
         cmbTipoEvento.getSelectionModel().clearSelection();
         panelCamposEspecificos.getChildren().clear();
+        
+        // Limpiar lista de responsables
+        responsablesSeleccionados.clear();
+        actualizarListaResponsables();
     }
 
     public void setPersonaLogueada(Persona persona) {
@@ -460,6 +545,20 @@ public class NuevoEventoController {
             peliculasAgregadas = ciclo.getPeliculas();
             lblPeliculasSeleccionadas.setText(peliculasAgregadas.size() + " película(s) seleccionada(s)");
         }
+        
+        // === CARGAR RESPONSABLES ===
+        // Este paso es crucial para el modo edición
+        if (evento.getResponsables() != null && !evento.getResponsables().isEmpty()) {
+            responsablesSeleccionados.clear();
+            responsablesSeleccionados.addAll(evento.getResponsables());
+            actualizarListaResponsables();
+        }
+    }
+
+    private void handleCancelar() {
+        // Cerrar la ventana actual
+        Stage stage = (Stage) btnCancelar.getScene().getWindow();
+        stage.close();
     }
 
     //Metodo para mostrar alertas de error

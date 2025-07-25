@@ -4,19 +4,22 @@ import com.example.modelo.Evento;
 import com.example.modelo.Persona;
 import com.example.repositorio.EventoRepository;
 
-import jakarta.persistence.EntityManager;
 import java.util.List;
 
 public class EventoService {
 
     private EventoRepository eventoRepo;
 
-    public EventoService(EntityManager em) {
-        this.eventoRepo = new EventoRepository(em);
+    public EventoService() {
+        this.eventoRepo = new EventoRepository();
     }
 
     public List<Evento> getEventosDisponibles() {
         return eventoRepo.findAllDisponibles();
+    }
+
+    public List<Evento> getTodosLosEventos() {
+        return eventoRepo.findAllWithRelations();
     }
 
     public List<Evento> getEventosPorResponsable(Persona responsable) {
@@ -38,5 +41,10 @@ public class EventoService {
     public void actualizarEvento(Evento evento) {
         eventoRepo.actualizarEvento(evento);
     }
+
+    public boolean esResponsableDelEvento(Persona persona, Evento evento) {
+        return eventoRepo.esResponsable(persona, evento);
+    }
+    
     // Aquí irían reglas de negocio más complejas
 }

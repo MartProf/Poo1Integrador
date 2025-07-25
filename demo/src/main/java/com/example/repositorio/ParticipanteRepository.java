@@ -32,6 +32,11 @@ public class ParticipanteRepository {
     }
 
     public boolean estaInscripto(Persona persona, Evento evento) {
+        // Validar que los parámetros no sean null
+        if (persona == null || evento == null) {
+            return false;
+        }
+        
         EntityManager em = getEntityManager();
         try {
             Long count = em.createQuery(
