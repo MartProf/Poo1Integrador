@@ -1,58 +1,257 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #478978;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controlador.RegistroController">
-
-  <children>
-
-    <AnchorPane layoutX="200.0" layoutY="50.0" prefHeight="500.0" prefWidth="500.0" style="-fx-background-color: #84DCC6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
-      <children>
-
-        <Label layoutX="180.0" layoutY="20.0" text="Registro">
-          <font>
-            <Font name="Verdana Bold" size="36.0" />
-          </font>
-        </Label>
-
-        <!-- Campos de texto -->
-        <Label layoutX="76.0" layoutY="83.0" text="Nombre:" />
-        <TextField fx:id="txtNombre" layoutX="150.0" layoutY="80.0" prefHeight="25.0" prefWidth="246.0" />
-
-        <Label layoutX="76.0" layoutY="123.0" text="Apellido:" />
-        <TextField fx:id="txtApellido" layoutX="150.0" layoutY="120.0" prefHeight="25.0" prefWidth="246.0" />
-
-        <Label layoutX="76.0" layoutY="163.0" text="DNI:" />
-        <TextField fx:id="txtDni" layoutX="150.0" layoutY="160.0" prefHeight="25.0" prefWidth="246.0" />
-
-        <Label layoutX="76.0" layoutY="203.0" text="Teléfono:" />
-        <TextField fx:id="txtTelefono" layoutX="150.0" layoutY="200.0" prefHeight="25.0" prefWidth="246.0" />
-
-        <Label layoutX="76.0" layoutY="243.0" text="Email:" />
-        <TextField fx:id="txtEmail" layoutX="150.0" layoutY="240.0" prefHeight="25.0" prefWidth="246.0" />
-
-        <Label fx:id="lblUsuario" layoutX="76.0" layoutY="283.0" text="Usuario:" />
-        <TextField fx:id="txtUsuario" layoutX="150.0" layoutY="280.0" prefHeight="25.0" prefWidth="246.0" />
-
-        <Label fx:id="lblContrasena" layoutX="76.0" layoutY="323.0" text="Contraseña:" />
-        <PasswordField fx:id="txtContrasena" layoutX="150.0" layoutY="320.0" prefHeight="25.0" prefWidth="246.0" />
-
-        <!-- Botones -->
-        <Button layoutX="150.0" layoutY="380.0" onAction="#handleRegistrar" prefWidth="200.0" text="Registrar" />
-
-        <Button layoutX="150.0" layoutY="420.0" onAction="#handleVolver" prefWidth="200.0" style="-fx-background-color: transparent; -fx-text-fill: blue; -fx-underline: true;" text="Volver">
-          <cursor>
-            <Cursor fx:constant="HAND" />
-          </cursor>
-        </Button>
-
-      </children>
-    </AnchorPane>
-  </children>
-</AnchorPane>
+<BorderPane prefHeight="700.0" prefWidth="1200.0" style="-fx-background: linear-gradient(to bottom, #2c3e50, #34495e);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controlador.RegistroController">
+   <center>
+      <HBox alignment="CENTER" spacing="0.0">
+         <children>
+            <!-- Panel de Branding Izquierdo -->
+            <VBox alignment="CENTER" prefWidth="500.0" style="-fx-background: linear-gradient(to bottom, #2c3e50, #1a252f); -fx-padding: 40;">
+               <children>
+                  <!-- Logo -->
+                  <VBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <ImageView fitHeight="80.0" fitWidth="80.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../resources/icons/logo-municipio.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="Sistema Municipal" textFill="WHITE">
+                           <font>
+                              <Font name="Segoe UI Bold" size="28.0" />
+                           </font>
+                        </Label>
+                        <Label text="Gestión de Eventos" textFill="#BDC3C7">
+                           <font>
+                              <Font name="Segoe UI" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  
+                  <!-- Separador -->
+                  <Region prefHeight="40.0" />
+                  
+                  <!-- Características del Sistema -->
+                  <VBox spacing="15.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Label text="✓" textFill="#3498DB">
+                                 <font>
+                                    <Font name="Segoe UI Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Gestión centralizada de eventos" textFill="#ECF0F1">
+                                 <font>
+                                    <Font name="Segoe UI" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Label text="✓" textFill="#3498DB">
+                                 <font>
+                                    <Font name="Segoe UI Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Control de inscripciones" textFill="#ECF0F1">
+                                 <font>
+                                    <Font name="Segoe UI" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            
+            <!-- Panel de Registro Derecho -->
+            <VBox alignment="CENTER" prefWidth="700.0" style="-fx-padding: 40;">
+               <children>
+                  <!-- Tarjeta de Registro -->
+                  <VBox alignment="TOP_CENTER" maxWidth="450.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 5); -fx-padding: 40 30 30 30;">
+                     <children>
+                        <!-- Título -->
+                        <VBox alignment="CENTER" spacing="5.0">
+                           <children>
+                              <Label text="Crear Cuenta" textFill="#2C3E50">
+                                 <font>
+                                    <Font name="Segoe UI Bold" size="28.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Complete los datos para registrarse" textFill="#7F8C8D">
+                                 <font>
+                                    <Font name="Segoe UI" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        
+                        <!-- Separador -->
+                        <Region prefHeight="30.0" />
+                        
+                        <!-- Contenedor con Scroll para Formulario -->
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="350.0" style="-fx-background: transparent; -fx-background-color: transparent;">
+                           <content>
+                              <VBox spacing="20.0" style="-fx-padding: 5;">
+                                 <children>
+                                    <!-- Campos del Formulario -->
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <Label text="Nombre *" textFill="#34495E">
+                                             <font>
+                                                <Font name="Segoe UI Semibold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="txtNombre" prefHeight="40.0" promptText="Ingrese su nombre" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-family: 'Segoe UI'; -fx-font-size: 14;">
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </VBox>
+                                    
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <Label text="Apellido *" textFill="#34495E">
+                                             <font>
+                                                <Font name="Segoe UI Semibold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="txtApellido" prefHeight="40.0" promptText="Ingrese su apellido" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-family: 'Segoe UI'; -fx-font-size: 14;">
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </VBox>
+                                    
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <Label text="DNI *" textFill="#34495E">
+                                             <font>
+                                                <Font name="Segoe UI Semibold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="txtDni" prefHeight="40.0" promptText="Ingrese su DNI" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-family: 'Segoe UI'; -fx-font-size: 14;">
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </VBox>
+                                    
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <Label text="Teléfono" textFill="#34495E">
+                                             <font>
+                                                <Font name="Segoe UI Semibold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="txtTelefono" prefHeight="40.0" promptText="Ingrese su teléfono" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-family: 'Segoe UI'; -fx-font-size: 14;">
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </VBox>
+                                    
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <Label text="Email *" textFill="#34495E">
+                                             <font>
+                                                <Font name="Segoe UI Semibold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="txtEmail" prefHeight="40.0" promptText="Ingrese su email" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-family: 'Segoe UI'; -fx-font-size: 14;">
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </VBox>
+                                    
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <Label fx:id="lblUsuario" text="Usuario *" textFill="#34495E">
+                                             <font>
+                                                <Font name="Segoe UI Semibold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="txtUsuario" prefHeight="40.0" promptText="Ingrese su usuario" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-family: 'Segoe UI'; -fx-font-size: 14;">
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </VBox>
+                                    
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <Label fx:id="lblContrasena" text="Contraseña *" textFill="#34495E">
+                                             <font>
+                                                <Font name="Segoe UI Semibold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <PasswordField fx:id="txtContrasena" prefHeight="40.0" promptText="Ingrese su contraseña" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-family: 'Segoe UI'; -fx-font-size: 14;">
+                                             <font>
+                                                <Font name="Segoe UI" size="14.0" />
+                                             </font>
+                                          </PasswordField>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                        
+                        <!-- Separador -->
+                        <Region prefHeight="20.0" />
+                        
+                        <!-- Botones -->
+                        <VBox spacing="15.0">
+                           <children>
+                              <Button onAction="#handleRegistrar" prefHeight="45.0" prefWidth="390.0" style="-fx-background-color: linear-gradient(to bottom, #3498DB, #2980B9); -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 16; -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 10, 0, 0, 2);" text="Crear Cuenta">
+                                 <font>
+                                    <Font name="Segoe UI Bold" size="16.0" />
+                                 </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              
+                              <Button onAction="#handleVolver" prefHeight="35.0" prefWidth="390.0" style="-fx-background-color: transparent; -fx-text-fill: #7F8C8D; -fx-border-color: transparent; -fx-underline: false;" text="¿Ya tienes cuenta? Iniciar Sesión">
+                                 <font>
+                                    <Font name="Segoe UI" size="14.0" />
+                                 </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </center>
+</BorderPane>

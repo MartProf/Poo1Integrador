@@ -1,17 +1,11 @@
 package com.example.controlador;
 
-import com.example.modelo.Evento;
-import com.example.modelo.Participante;
 import com.example.modelo.Persona;
+import com.example.servicio.EventoService;
 import com.example.servicio.PersonaService;
-
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -19,17 +13,21 @@ public class PerfilController implements Initializable {
 
     private Persona personaLogueada;
     private PersonaService personaService = new PersonaService();
+    private EventoService eventoService = new EventoService();
 
+    // Campos de datos personales
     @FXML private TextField nombreField;
     @FXML private TextField apellidoField;
     @FXML private TextField emailField;
     @FXML private TextField dniField;
     @FXML private TextField telefonoField;
     @FXML private Button guardarButton;
-    @FXML private TableView<Evento> tablaInscripciones;
-    @FXML private TableColumn<Evento, String> colNombreEvento;
-    @FXML private TableColumn<Evento, String> colFechaInicio;
-    @FXML private TableColumn<Evento, String> colTipo;
+    
+    // Labels de estadísticas
+    @FXML private Label lblEventosActivos;
+    @FXML private Label lblTotalParticipantes;
+    @FXML private Label lblEventosMes;
+    @FXML private Label lblUltimaActualizacion;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -39,7 +37,6 @@ public class PerfilController implements Initializable {
     public void setPersonaLogueada(Persona persona) {
         this.personaLogueada = persona;
         cargarDatosPersona();
-        cargarInscripciones();
     }
 
     private void cargarDatosPersona() {
@@ -111,7 +108,10 @@ public class PerfilController implements Initializable {
 
                 personaService.actualizarPersona(personaLogueada);
 
+
                 mostrarAlertaInfo("Éxito", "Datos actualizados correctamente.");
+                cargarDatosPersona(); // Recargar datos actualizados
+                
             } catch (Exception e) {
                 mostrarAlertaInfo("Error", "Ocurrió un error al actualizar los datos: " + e.getMessage());
                 e.printStackTrace();
@@ -119,34 +119,7 @@ public class PerfilController implements Initializable {
         }
     }
 
-    private void cargarInscripciones() {
-        if (personaLogueada != null) {
-            // Refrescar la persona desde la base de datos con sus participaciones cargadas
-            Persona personaActualizada = personaService.buscarPorDniConParticipaciones(personaLogueada.getDni());
-            if (personaActualizada != null) {
-                this.personaLogueada = personaActualizada;
-            }
-            
-            ObservableList<Evento> eventos = FXCollections.observableArrayList();
-            // Ahora las participaciones están cargadas (eager loading)
-            for (Participante p : personaLogueada.getParticipaciones()) {
-                eventos.add(p.getEvento());
-            }
-
-            colNombreEvento.setCellValueFactory(e -> new ReadOnlyStringWrapper(e.getValue().getNombre()));
-            colFechaInicio.setCellValueFactory(e -> new ReadOnlyStringWrapper(e.getValue().getFechaInicio().toString()));
-            colTipo.setCellValueFactory(e -> new ReadOnlyStringWrapper(e.getValue().getClass().getSimpleName()));
-
-            tablaInscripciones.setItems(eventos);
-        }
-    }
-
-    // Método público para refrescar las inscripciones desde otros controladores
-    public void refrescarInscripciones() {
-        cargarInscripciones();
-    }
-
-     //Metodo para mostrar alertas de informacion
+    // Método para mostrar alertas de información
     private void mostrarAlertaInfo(String titulo, String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
         alerta.setTitle(titulo);

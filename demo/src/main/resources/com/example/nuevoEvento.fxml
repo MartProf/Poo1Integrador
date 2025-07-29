@@ -9,25 +9,25 @@
            fx:controller="com.example.controlador.NuevoEventoController">
 
     <ScrollPane fitToWidth="true" style="-fx-background-color: #ffffff;">
-        <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 30;">
+        <VBox spacing="15" alignment="TOP_CENTER" style="-fx-padding: 20;">
 
             <!-- Título Principal -->
             <HBox alignment="CENTER_LEFT" spacing="10">
                 <Label text="📅 Gestión de Eventos Municipales" 
-                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
             </HBox>
             
             <!-- Subtítulo dinámico -->
             <Label fx:id="lblSubtitulo" text="Crear Nuevo Evento" 
-                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
             
             <!-- Panel Principal de Información Básica -->
-            <VBox spacing="15" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8;">
+            <VBox spacing="12" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 8;">
                 <Label text="📋 Información Básica del Evento" 
-                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
                 
                 <!-- Fila 1: Tipo y Nombre -->
-                <HBox spacing="20">
+                <HBox spacing="15">
                     <VBox spacing="5" HBox.hgrow="ALWAYS">
                         <Label text="Tipo de evento:" style="-fx-font-weight: bold; -fx-text-fill: #34495e;"/>
                         <ComboBox fx:id="cmbTipoEvento" onAction="#handleTipoEventoChanged" 
@@ -41,7 +41,7 @@
                 </HBox>
 
                 <!-- Fila 2: Fecha y Duración -->
-                <HBox spacing="20">
+                <HBox spacing="15">
                     <VBox spacing="5" HBox.hgrow="ALWAYS">
                         <Label text="Fecha de inicio:" style="-fx-font-weight: bold; -fx-text-fill: #34495e;"/>
                         <DatePicker fx:id="dateFechaInicio" maxWidth="Infinity" 
@@ -61,44 +61,44 @@
             </VBox>
 
             <!-- Panel de Responsables -->
-            <VBox spacing="15" style="-fx-background-color: #e8f5e8; -fx-padding: 20; -fx-background-radius: 8;">
+            <VBox spacing="12" style="-fx-background-color: #e8f5e8; -fx-padding: 15; -fx-background-radius: 8;">
                 <Label text="👥 Responsables del Evento" 
-                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
                 
-                <VBox spacing="10" style="-fx-background-color: white; -fx-border-color: #27ae60; -fx-border-radius: 5; -fx-padding: 15; -fx-background-radius: 5;">
-                    <HBox spacing="15" alignment="CENTER_LEFT">
+                <VBox spacing="8" style="-fx-background-color: white; -fx-border-color: #27ae60; -fx-border-radius: 5; -fx-padding: 12; -fx-background-radius: 5;">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
                         <Button fx:id="btnAgregarResponsable" text="➕ Agregar Responsable" 
                                 onAction="#handleAgregarResponsable"
-                                style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"/>
+                                style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 6 12; -fx-font-size: 12px;"/>
                         <Label fx:id="lblCantidadResponsables" text="0 responsables seleccionados" 
-                               style="-fx-text-fill: #7f8c8d; -fx-font-size: 14px;"/>
+                               style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Label text="💡 Doble click en la lista para eliminar" 
-                               style="-fx-text-fill: #95a5a6; -fx-font-size: 12px; -fx-font-style: italic;"/>
+                               style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-style: italic;"/>
                     </HBox>
-                    <ListView fx:id="listResponsables" maxHeight="100" 
+                    <ListView fx:id="listResponsables" maxHeight="80" 
                               style="-fx-background-color: #f8f9fa; -fx-border-color: #ecf0f1; -fx-border-radius: 3;"/>
                 </VBox>
             </VBox>
 
             <!-- Panel de Campos Específicos -->
-            <VBox spacing="15" style="-fx-background-color: #fff3cd; -fx-padding: 20; -fx-background-radius: 8;">
+            <VBox spacing="12" style="-fx-background-color: #fff3cd; -fx-padding: 15; -fx-background-radius: 8;">
                 <Label text="⚙️ Configuración Específica" 
-                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #856404;"/>
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #856404;"/>
                 <Label text="Los campos específicos aparecerán aquí según el tipo de evento seleccionado" 
-                       style="-fx-text-fill: #6c757d; -fx-font-size: 14px; -fx-font-style: italic;"/>
+                       style="-fx-text-fill: #6c757d; -fx-font-size: 12px; -fx-font-style: italic;"/>
                 
                 <!-- Contenedor dinámico -->
-                <VBox fx:id="panelCamposEspecificos" spacing="15" 
-                      style="-fx-background-color: white; -fx-border-color: #ffc107; -fx-border-radius: 5; -fx-padding: 15; -fx-background-radius: 5;"/>
+                <VBox fx:id="panelCamposEspecificos" spacing="12" 
+                      style="-fx-background-color: white; -fx-border-color: #ffc107; -fx-border-radius: 5; -fx-padding: 12; -fx-background-radius: 5;"/>
             </VBox>
 
             <!-- Panel de Acciones -->
-            <HBox spacing="15" alignment="CENTER" style="-fx-padding: 20 0;">
+            <HBox spacing="12" alignment="CENTER" style="-fx-padding: 15 0;">
                 <Button text="💾 Guardar Evento" onAction="#handleGuardarEvento"
-                        style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 30; -fx-font-size: 16px; -fx-background-radius: 5;"/>
+                        style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 25; -fx-font-size: 14px; -fx-background-radius: 5;"/>
                 <Button fx:id="btnCancelar" text="❌ Cancelar" 
-                        style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 30; -fx-font-size: 16px; -fx-background-radius: 5;"/>
+                        style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 25; -fx-font-size: 14px; -fx-background-radius: 5;"/>
             </HBox>
 
         </VBox>

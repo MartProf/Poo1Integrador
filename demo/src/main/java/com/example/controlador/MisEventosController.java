@@ -16,6 +16,7 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class MisEventosController {
 
@@ -568,8 +569,21 @@ public class MisEventosController {
 
             Stage stage = new Stage();
             stage.setTitle("Editar Evento");
-            stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true); // ✅ Permitir redimensionar
+            
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            
+            // ✅ Configurar tamaño optimal para evitar problemas con barra de tareas
+            stage.setWidth(800);
+            stage.setHeight(600);
+            stage.setMinWidth(700);
+            stage.setMinHeight(500);
+            
+            // ✅ Centrar la ventana automáticamente
+            stage.centerOnScreen();
+            
             stage.showAndWait();
 
             cargarTodosLosEventos(); // Recargar tabla después de editar
@@ -580,10 +594,27 @@ public class MisEventosController {
     }
 
     private void eliminarEvento(Evento evento) {
-        // Aquí podrías agregar una confirmación antes de eliminar
-        System.out.println("Eliminar evento: " + evento.getNombre());
-        eventoService.eliminarEvento(evento);
-        cargarTodosLosEventos(); // Recargar tabla después de eliminar
+        // ✅ Confirmación simple antes de eliminar
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("🗑️ Confirmar Eliminación");
+        confirmacion.setHeaderText("¿Está seguro que desea eliminar este evento?");
+        confirmacion.setContentText(null);
+        
+        // Botones simples: Sí / No
+        confirmacion.getButtonTypes().setAll(
+            ButtonType.YES, 
+            ButtonType.NO
+        );
+        
+        // Mostrar y procesar respuesta
+        Optional<ButtonType> resultado = confirmacion.showAndWait();
+        
+        if (resultado.isPresent() && resultado.get() == ButtonType.YES) {
+            // Solo eliminar si presionó "Sí"
+            eventoService.eliminarEvento(evento);
+            cargarTodosLosEventos(); // Recargar tabla después de eliminar
+        }
+        // Si presionó "No" o cerró, no hacer nada
     }
 
 }

@@ -30,7 +30,7 @@ public class DashboardController {
         this.personaLogueada = persona;
         if (lblUsuario != null && persona != null) {
             lblUsuario.setText(persona.getNombre() + " " + persona.getApellido());
-        }
+        } 
     }
 
     @FXML
@@ -72,7 +72,7 @@ public class DashboardController {
             PerfilController controller = loader.getController();
             controller.setPersonaLogueada(personaLogueada); // la persona logueada
             // Refrescar las inscripciones cada vez que se accede al perfil
-            controller.refrescarInscripciones();
+            //controller.refrescarInscripciones();
 
             contentPane.getChildren().setAll(root);
         } catch (IOException e) {

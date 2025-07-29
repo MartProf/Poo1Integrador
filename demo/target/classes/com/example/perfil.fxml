@@ -4,41 +4,45 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.controlador.PerfilController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controlador.PerfilController">
     
     <center>
-        <VBox spacing="20" style="-fx-padding: 10;">
-            <Label text="Perfil de Usuario" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <VBox spacing="25" style="-fx-padding: 30;">
+            <!-- Título -->
+            <Label text="👨‍💼 Perfil del Empleado Municipal" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
             <!-- Datos personales -->
-            <GridPane hgap="10" vgap="10">
-                <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="nombreField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <VBox spacing="15">
+                <Label text="📋 Información Personal" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #34495e;"/>
+                
+                <GridPane hgap="15" vgap="12" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8;">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="100" prefWidth="120"/>
+                        <ColumnConstraints minWidth="200" prefWidth="300"/>
+                    </columnConstraints>
+                    
+                    <Label text="Nombre:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="nombreField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                <Label text="Apellido:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="apellidoField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Apellido:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="apellidoField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                <Label text="Email:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="emailField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="Email:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="emailField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                <Label text="DNI:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="dniField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Label text="DNI:" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <TextField fx:id="dniField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-                <Label text="Teléfono:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="telefonoField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-            </GridPane>
-
-            <Button fx:id="guardarButton" text="Guardar cambios" onAction="#guardarDatos"/>
-
-            <!-- Inscripciones -->
-            <Label text="Eventos en los que estás inscripto:" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-            <TableView fx:id="tablaInscripciones" prefHeight="200">
-                <columns>
-                    <TableColumn fx:id="colNombreEvento" text="Evento"/>
-                    <TableColumn fx:id="colFechaInicio" text="Fecha de Inicio"/>
-                    <TableColumn fx:id="colTipo" text="Tipo"/>
-                </columns>
-            </TableView>
+                    <Label text="Teléfono:" style="-fx-font-weight: bold;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <TextField fx:id="telefonoField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    
+                    <Label text="Cargo:" style="-fx-font-weight: bold;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                    <Label text="Empleado Municipal - Gestión de Eventos" style="-fx-text-fill: #2980b9; -fx-font-weight: bold;" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                </GridPane>
+                
+                <Button fx:id="guardarButton" text="💾 Guardar Cambios" onAction="#guardarDatos" 
+                        style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 5;"/>
+            </VBox>
         </VBox>
     </center>
 
