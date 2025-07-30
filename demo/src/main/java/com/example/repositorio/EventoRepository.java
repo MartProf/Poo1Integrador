@@ -4,11 +4,9 @@ import com.example.modelo.Evento;
 import com.example.modelo.EstadoEvento;
 import com.example.modelo.Persona;
 import com.example.util.JpaUtil;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-
 import java.util.List;
 
 public class EventoRepository {

@@ -61,4 +61,52 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <!-- Plugin para compilar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+            
+            <!-- Plugin para generar JavaDoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <charset>UTF-8</charset>
+                    <docencoding>UTF-8</docencoding>
+                    <encoding>UTF-8</encoding>
+                    <locale>es_ES</locale>
+                    <windowTitle>Sistema Municipal de Eventos - Documentación API</windowTitle>
+                    <doctitle>Sistema Municipal de Eventos - Documentación API</doctitle>
+                    <bottom>Copyright © 2025 Sistema Municipal de Eventos. Todos los derechos reservados.</bottom>
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                    <failOnError>false</failOnError>
+                    <additionalJOptions>
+                        <additionalJOption>-J-Duser.language=es</additionalJOption>
+                        <additionalJOption>-J-Duser.country=ES</additionalJOption>
+                    </additionalJOptions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
