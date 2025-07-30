@@ -4,40 +4,45 @@ import com.example.modelo.Evento;
 import com.example.modelo.EstadoEvento;
 import com.example.modelo.Persona;
 import com.example.util.JpaUtil;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
+
 import java.util.List;
 
 public class EventoRepository {
 
-    // Método helper para obtener EntityManager fresco
+    // Método helper que proporciona un EntityManager nuevo para conectarse con la base de datos
     private EntityManager getEntityManager() {
         return JpaUtil.getEntityManager();
     }
 
+    // Devuelve todos los eventos sin cargar relaciones
     public List<Evento> findAll() {
         EntityManager em = getEntityManager();
         try {
             return em.createQuery("SELECT e FROM Evento e", Evento.class).getResultList();
         } finally {
-            em.close();
+            em.close(); // Siempre cerrar el EntityManager
         }
     }
 
+    // Devuelve todos los eventos junto con sus relaciones (responsables, participantes, artistas, películas)
     public List<Evento> findAllWithRelations() {
         EntityManager em = getEntityManager();
         try {
-            // Primer query: cargar eventos con responsables
+            // Consulta 1: cargar eventos con sus responsables (LEFT JOIN FETCH)
             TypedQuery<Evento> query1 = em.createQuery(
                     "SELECT DISTINCT e FROM Evento e " +
                     "LEFT JOIN FETCH e.responsables",
                     Evento.class
             );
             List<Evento> eventos = query1.getResultList();
-            
-            // Segundo query: cargar participantes para los eventos obtenidos
+
+            // Si hay eventos, proceder a cargar otras relaciones
             if (!eventos.isEmpty()) {
+                // Consulta 2: cargar participantes
                 TypedQuery<Evento> query2 = em.createQuery(
                         "SELECT DISTINCT e FROM Evento e " +
                         "LEFT JOIN FETCH e.participantes " +
@@ -45,14 +50,14 @@ public class EventoRepository {
                         Evento.class
                 );
                 query2.setParameter("eventos", eventos);
-                query2.getResultList(); // Esto carga los participantes en caché
-                
-                // Tercer query: cargar artistas para los conciertos
-                // Filtrar por ID para evitar problemas de conversión de tipos
+                query2.getResultList(); // Forzar carga en caché
+
+                // Extraer IDs para siguientes consultas
                 List<Integer> eventosIds = eventos.stream()
                     .map(Evento::getId)
                     .collect(java.util.stream.Collectors.toList());
-                
+
+                // Consulta 3: cargar artistas para conciertos
                 TypedQuery<Evento> query3 = em.createQuery(
                         "SELECT DISTINCT c FROM Concierto c " +
                         "LEFT JOIN FETCH c.artistas " +
@@ -60,9 +65,9 @@ public class EventoRepository {
                         Evento.class
                 );
                 query3.setParameter("eventosIds", eventosIds);
-                query3.getResultList(); // Esto carga los artistas en caché
-                
-                // Cuarto query: cargar películas para los ciclos de cine
+                query3.getResultList(); // Carga en caché
+
+                // Consulta 4: cargar películas para ciclos de cine
                 TypedQuery<Evento> query4 = em.createQuery(
                         "SELECT DISTINCT cc FROM CicloDeCine cc " +
                         "LEFT JOIN FETCH cc.peliculas " +
@@ -70,31 +75,31 @@ public class EventoRepository {
                         Evento.class
                 );
                 query4.setParameter("eventosIds", eventosIds);
-                query4.getResultList(); // Esto carga las películas en caché
+                query4.getResultList(); // Carga en caché
             }
-            
+
             return eventos;
         } finally {
             em.close();
         }
     }
 
+    // Retorna solo los eventos confirmados y carga todas sus relaciones asociadas
     public List<Evento> findAllDisponibles() {
         EntityManager em = getEntityManager();
         try {
-            // Solo eventos que estén CONFIRMADOS
             TypedQuery<Evento> query = em.createQuery(
                     "SELECT e FROM Evento e WHERE e.estado = :estado",
                     Evento.class
             );
             query.setParameter("estado", EstadoEvento.CONFIRMADO);
             List<Evento> eventos = query.getResultList();
-            
-            // Inicializar las colecciones lazy dentro de la sesión
+
+            // Forzar carga de relaciones para cada evento (evita LazyInitializationException)
             for (Evento evento : eventos) {
-                evento.getResponsables().size(); // Forzar carga de responsables
-                evento.getParticipantes().size(); // Forzar carga de participantes
-                
+                evento.getResponsables().size();     // Cargar responsables
+                evento.getParticipantes().size();    // Cargar participantes
+
                 // Cargar relaciones específicas según el tipo de evento
                 if (evento instanceof com.example.modelo.Concierto) {
                     ((com.example.modelo.Concierto) evento).getArtistas().size();
@@ -102,53 +107,51 @@ public class EventoRepository {
                     ((com.example.modelo.CicloDeCine) evento).getPeliculas().size();
                 }
             }
-            
+
             return eventos;
         } finally {
             em.close();
         }
     }
 
+    // Devuelve los eventos en los que la persona especificada es responsable
     public List<Evento> findByResponsable(Persona responsable) {
         EntityManager em = getEntityManager();
         try {
-            // Devuelve los eventos donde la persona es responsable
             TypedQuery<Evento> query = em.createQuery(
                     "SELECT e FROM Evento e JOIN e.responsables r WHERE r = :responsable",
                     Evento.class
             );
             query.setParameter("responsable", responsable);
             List<Evento> eventos = query.getResultList();
-            
-            // Inicializar las colecciones lazy dentro de la sesión
+
+            // Forzar carga de relaciones para cada evento
             for (Evento evento : eventos) {
-                evento.getResponsables().size(); // Forzar carga de responsables
-                evento.getParticipantes().size(); // Forzar carga de participantes
-                
-                // Cargar relaciones específicas según el tipo de evento
+                evento.getResponsables().size();
+                evento.getParticipantes().size();
+
                 if (evento instanceof com.example.modelo.Concierto) {
                     ((com.example.modelo.Concierto) evento).getArtistas().size();
                 } else if (evento instanceof com.example.modelo.CicloDeCine) {
                     ((com.example.modelo.CicloDeCine) evento).getPeliculas().size();
                 }
             }
-            
+
             return eventos;
         } finally {
             em.close();
         }
     }
 
+    // Busca un evento por su ID y carga todas sus relaciones si lo encuentra
     public Evento findById(int id) {
         EntityManager em = getEntityManager();
         try {
             Evento evento = em.find(Evento.class, id);
             if (evento != null) {
-                // Inicializar las colecciones lazy dentro de la sesión
-                evento.getResponsables().size(); // Forzar carga de responsables
-                evento.getParticipantes().size(); // Forzar carga de participantes
-                
-                // Cargar relaciones específicas según el tipo de evento
+                evento.getResponsables().size();
+                evento.getParticipantes().size();
+
                 if (evento instanceof com.example.modelo.Concierto) {
                     ((com.example.modelo.Concierto) evento).getArtistas().size();
                 } else if (evento instanceof com.example.modelo.CicloDeCine) {
@@ -161,20 +164,21 @@ public class EventoRepository {
         }
     }
 
+    // Guarda un evento nuevo o actualiza uno existente (según si tiene ID)
     public void save(Evento evento) {
         EntityManager em = getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
             if (evento.getId() == 0) {
-                em.persist(evento);
+                em.persist(evento); // Evento nuevo
             } else {
-                em.merge(evento);
+                em.merge(evento);   // Evento existente, se actualiza
             }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) {
-                tx.rollback();
+                tx.rollback(); // Reversión si ocurre error
             }
             throw e;
         } finally {
@@ -182,34 +186,17 @@ public class EventoRepository {
         }
     }
 
+    // Actualiza un evento existente
     public void actualizarEvento(Evento evento) {
         EntityManager em = getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.merge(evento);
+            em.merge(evento); // Actualiza el evento
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) {
-                tx.rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
-    
-    public void delete(Evento evento) {
-        EntityManager em = getEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            Evento eventoToDelete = em.contains(evento) ? evento : em.merge(evento);
-            em.remove(eventoToDelete);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) {
-                tx.rollback();
+                tx.rollback(); // Revierte en caso de error
             }
             throw e;
         } finally {
@@ -217,13 +204,32 @@ public class EventoRepository {
         }
     }
 
-    // Nuevo método: verificar si una persona es responsable de un evento
-    public boolean esResponsable(Persona persona, Evento evento) {
-        // Validar que los parámetros no sean null
-        if (persona == null || evento == null) {
-            return false;
+    // Elimina un evento de la base de datos
+    public void delete(Evento evento) {
+        EntityManager em = getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            // Si la entidad no está en el contexto de persistencia, se adjunta
+            Evento eventoToDelete = em.contains(evento) ? evento : em.merge(evento);
+            em.remove(eventoToDelete); // Elimina el evento
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback(); // Deshace si ocurre error
+            }
+            throw e;
+        } finally {
+            em.close();
         }
-        
+    }
+
+    // Verifica si una persona es responsable de un evento
+    public boolean esResponsable(Persona persona, Evento evento) {
+        if (persona == null || evento == null) {
+            return false; // Validación de parámetros
+        }
+
         EntityManager em = getEntityManager();
         try {
             Long count = em.createQuery(
@@ -232,8 +238,7 @@ public class EventoRepository {
             ).setParameter("eventoId", evento.getId())
              .setParameter("personaDni", persona.getDni())
              .getSingleResult();
-            
-            return count > 0;
+            return count > 0; // Retorna true si existe al menos una coincidencia
         } finally {
             em.close();
         }
