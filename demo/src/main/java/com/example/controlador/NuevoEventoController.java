@@ -46,8 +46,6 @@ public class NuevoEventoController {
     @FXML
     private ListView<Persona> listResponsables;
 
-    @FXML
-    private Button btnCancelar;
 
     @FXML
     private Label lblSubtitulo;
@@ -104,10 +102,6 @@ public class NuevoEventoController {
         // Inicializar lista de responsables
         actualizarListaResponsables();
         
-        // Configurar botón cancelar
-        if (btnCancelar != null) {
-            btnCancelar.setOnAction(e -> handleCancelar());
-        }
     }
 
     @FXML
@@ -553,12 +547,6 @@ public class NuevoEventoController {
             responsablesSeleccionados.addAll(evento.getResponsables());
             actualizarListaResponsables();
         }
-    }
-
-    private void handleCancelar() {
-        // Cerrar la ventana actual
-        Stage stage = (Stage) btnCancelar.getScene().getWindow();
-        stage.close();
     }
 
     //Metodo para mostrar alertas de error

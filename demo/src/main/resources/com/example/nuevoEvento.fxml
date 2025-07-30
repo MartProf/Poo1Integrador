@@ -97,8 +97,6 @@
             <HBox spacing="12" alignment="CENTER" style="-fx-padding: 15 0;">
                 <Button text="💾 Guardar Evento" onAction="#handleGuardarEvento"
                         style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 25; -fx-font-size: 14px; -fx-background-radius: 5;"/>
-                <Button fx:id="btnCancelar" text="❌ Cancelar" 
-                        style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 25; -fx-font-size: 14px; -fx-background-radius: 5;"/>
             </HBox>
 
         </VBox>
