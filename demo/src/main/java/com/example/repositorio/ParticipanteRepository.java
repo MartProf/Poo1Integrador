@@ -4,7 +4,6 @@ import com.example.modelo.Evento;
 import com.example.modelo.Participante;
 import com.example.modelo.Persona;
 import com.example.util.JpaUtil;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 
