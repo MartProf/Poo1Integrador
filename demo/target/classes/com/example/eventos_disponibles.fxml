@@ -75,7 +75,7 @@
                     <columns>
                         <TableColumn fx:id="colNombre" text="Evento" prefWidth="180"/>
                         <TableColumn fx:id="colTipo" text="Tipo" prefWidth="90"/>
-                        <TableColumn fx:id="colHorario" text="Horario" prefWidth="70"/>
+                        <TableColumn fx:id="colHorario" text="Fecha" prefWidth="70"/>
                         <TableColumn fx:id="colDuracion" text="Duración" prefWidth="70"/>
                         <TableColumn fx:id="colEstado" text="Estado" prefWidth="90"/>
                         <TableColumn fx:id="colCupo" text="Cupo" prefWidth="100"/>

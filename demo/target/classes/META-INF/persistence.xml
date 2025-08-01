@@ -15,7 +15,6 @@
         <class>com.example.modelo.Taller</class>
 
 
-        <!-- ACA SEGUI DEFINIENDO TUS CLASES A PERSISTIR-->
                  
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>

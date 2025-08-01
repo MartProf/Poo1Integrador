@@ -97,7 +97,6 @@ public class JpaUtil {
             // Acá se lee tu persistence.xml
             emf = Persistence.createEntityManagerFactory("Municipalidad");
         } catch (Throwable ex) {
-            System.err.println("Inicialización de EntityManagerFactory falló: " + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
